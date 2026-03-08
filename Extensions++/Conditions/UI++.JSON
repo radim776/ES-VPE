@@ -1,0 +1,45 @@
+[
+    {
+        "SpecialType": "ExtensionData",
+        "Name": "UI++",
+        "Version": "0.0.3",
+        "Developer": "RO INC",
+        "Website": "https://ro-inc.xyz"
+    },
+    {
+        "Name": "KeyEventArgs KeyCode check",
+        "Parameters": [
+            {
+                "Id": "KeyEventArgs",
+                "Type": "Expr",
+                "Required": true
+            },
+            {
+                "Id": "KeyCode",
+                "Type": "Expr",
+                "Required": true
+            }
+        ],
+        "Prep": "",
+        "IfLine": "If %KeyEventArgs%.KeyCode =Keys.%KeyCode% Then",
+        "EndLine": "End If"
+    },
+    {
+        "Name": "KeyPressEventArgs KeyChat check",
+        "Parameters": [
+            {
+                "Id": "KeyPressEventArgs",
+                "Type": "Expr",
+                "Required": true
+            },
+            {
+                "Id": "KeyChar",
+                "Type": "Str",
+                "Required": true
+            }
+        ],
+        "Prep": "",
+        "IfLine": "If %KeyPressEventArgs%.KeyChar =%KeyChar%c Then",
+        "EndLine": "End If"
+    }
+]
