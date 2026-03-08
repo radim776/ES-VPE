@@ -1,0 +1,23 @@
+[
+	{
+		"SpecialType": "ExtensionData",
+		"Name": "FS++",
+		"Version": "0.0.3",
+		"Developer": "RO INC",
+		"Website": "https://ro-inc.xyz"
+	},
+	{
+		"Name": "Directory Not Exists",
+		"Parameters": [
+
+			{
+				"Id": "Path",
+				"Type": "Expr",
+				"Required": true
+			}
+		],
+		"Prep": "",
+		"IfLine": "If Not Directory.Exists(%Path%) Then",
+		"EndLine": "End If"
+	}
+]
