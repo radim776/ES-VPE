@@ -1,0 +1,576 @@
+[
+	{
+		"SpecialType": "ExtensionData",
+		"Name": "UI++",
+		"Version": "0.0.3",
+		"Developer": "RO INC",
+		"Website": "https://ro-inc.xyz/"
+	},
+	{
+		"Name": "Set image",
+		"Parameters": [
+			{
+				"Id": "imgpath",
+				"Type": "Str",
+				"Required": true
+			},
+			{
+				"Id": "picturebox",
+				"Type": "Expr",
+				"Required": false
+			}
+		],
+		"Code": "%picturebox%.Image=Image.FromFile(%imgpath%)",
+		"CustomSubs": ""
+	},
+	{
+		"Name": "Set embedded image",
+		"Parameters": [
+			{
+				"Id": "imgpath",
+				"Type": "Str",
+				"Required": true
+			},
+			{
+				"Id": "picturebox",
+				"Type": "Expr",
+				"Required": false
+			}
+		],
+		"Code": "%picturebox%.Image = Image.FromStream(Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(%imgpath%))",
+		"CustomSubs": ""
+	},
+	{
+		"Name": "remove image",
+		"Parameters": [
+			{
+				"Id": "picturebox",
+				"Type": "Expr",
+				"Required": true
+			}
+		],
+		"Code": "%picturebox%.Image=Nothing",
+		"CustomSubs": ""
+	},
+	{
+		"Name": "Set Image SizeMode",
+		"Parameters": [
+			{
+				"Id": "picturebox",
+				"Type": "Expr",
+				"Required": true
+			},
+			{
+				"Id": "sizemode",
+				"Type": "Select",
+				"Required": true,
+				"Values": {
+					"PictureBoxSizeMode.StretchImage": "Stretch",
+					"PictureBoxSizeMode.Zoom": "Zoom",
+					"PictureBoxSizeMode.CenterImage": "Center"
+				}
+			}
+		],
+		"Code": "%picturebox%.SizeMode=%sizemode%",
+		"CustomSubs": ""
+	},
+	{
+		"Name": "Set BackColor",
+		"Parameters": [
+			{
+				"Id": "control",
+				"Type": "Expr",
+				"Required": true
+			},
+			{
+				"Id": "color",
+				"Type": "Expr",
+				"Required": true
+			}
+		],
+		"Code": "%control%.BackColor=%color%",
+		"CustomSubs": ""
+	},
+	{
+		"Name": "Set ForeColor",
+		"Parameters": [
+			{
+				"Id": "control",
+				"Type": "Expr",
+				"Required": true
+			},
+			{
+				"Id": "color",
+				"Type": "Expr",
+				"Required": true
+			}
+		],
+		"Code": "%control%.ForeColor=%color%",
+		"CustomSubs": ""
+	},
+	{
+		"Name": "Set BackColor (RGB)",
+		"Parameters": [
+			{
+				"Id": "control",
+				"Type": "Expr",
+				"Required": true
+			},
+			{
+				"Id": "r",
+				"Type": "Expr",
+				"Required": true
+			},
+			{
+				"Id": "g",
+				"Type": "Expr",
+				"Required": true
+			},
+			{
+				"Id": "b",
+				"Type": "Expr",
+				"Required": true
+			}
+		],
+		"Code": "%control%.BackColor=Color.FromArgb(%r%,%g%,%b%)",
+		"CustomSubs": ""
+	},
+	{
+		"Name": "Set ForeColor (RGB)",
+		"Parameters": [
+			{
+				"Id": "control",
+				"Type": "Expr",
+				"Required": true
+			},
+			{
+				"Id": "r",
+				"Type": "Expr",
+				"Required": true
+			},
+			{
+				"Id": "g",
+				"Type": "Expr",
+				"Required": true
+			},
+			{
+				"Id": "b",
+				"Type": "Expr",
+				"Required": true
+			}
+		],
+		"Code": "%control%.ForeColor=Color.FromArgb(%r%,%g%,%b%)",
+		"CustomSubs": ""
+	},
+	{
+		"Name": "Enable or Disable Control",
+		"Parameters": [
+			{
+				"Id": "control",
+				"Type": "Expr",
+				"Required": true
+			},
+			{
+				"Id": "enabled",
+				"Type": "Bool",
+				"Required": true
+			}
+		],
+		"Code": "%control%.Enabled=%enabled%",
+		"CustomSubs": ""
+	},
+	{
+		"Name": "Set font",
+		"Parameters": [
+			{
+				"Id": "control",
+				"Type": "Expr",
+				"Required": true
+			},
+			{
+				"Id": "fontname",
+				"Type": "Str",
+				"Required": false,
+				"Default": "Arial"
+			},
+			{
+				"Id": "fontsize",
+				"Type": "Num",
+				"Required": false,
+				"Default": 12.0
+			},
+			{
+				"Id": "fontstyle",
+				"Type": "Select",
+				"Required": false,
+				"Default": "FontStyle.Regular",
+				"Values": {
+					"FontStyle.Regular": "Regular",
+					"FontStyle.Bold": "Bold",
+					"FontStyle.Italic": "Italic",
+					"FontStyle.Underline": "Underline",
+					"FontStyle.Strikeout": "Strikeout"
+				}
+			}
+		],
+		"Code": "%control%.Font=New Font(%fontname%,%fontsize%,%fontstyle%)",
+		"CustomSubs": ""
+	},
+	{
+		"Name": "set control Size",
+		"Parameters": [
+			{
+				"Id": "control",
+				"Type": "Expr",
+				"Required": false
+			},
+			{
+				"Id": "width",
+				"Type": "Expr",
+				"Required": true
+			},
+			{
+				"Id": "height",
+				"Type": "Expr",
+				"Required": true
+			}
+		],
+		"Code": "%control%.Size = New Size(%width%, %height%)",
+		"CustomSubs": ""
+	},
+	{
+		"Name": "Set Control Location",
+		"Parameters": [
+			{
+				"Id": "control",
+				"Type": "Expr",
+				"Required": true
+			},
+			{
+				"Id": "x",
+				"Type": "Expr",
+				"Required": true
+			},
+			{
+				"Id": "y",
+				"Type": "Expr",
+				"Required": true
+			}
+		],
+		"Code": "%control%.Location = New Point(%x%, %y%)",
+		"CustomSubs": ""
+	},
+	{
+		"Name": "Add Tooltip",
+		"Parameters": [
+			{
+				"Id": "control",
+				"Type": "Expr",
+				"Required": true
+			},
+			{
+				"Id": "Text",
+				"Type": "Str",
+				"Required": false
+			}
+		],
+		"Code": "Dim %control%_tt As New ToolTip()\n%control%_tt.SetToolTip(%control%, %Text%)",
+		"CustomSubs": ""
+	},
+	{
+		"Name": "Cursor",
+		"Parameters": [
+			{
+				"Id": "control",
+				"Type": "Expr",
+				"Required": true
+			},
+			{
+				"Id": "cursor",
+				"Type": "Select",
+				"Required": true,
+				"Values": {
+					"Cursors.Default": "Default",
+					"Cursors.Hand": "Hand",
+					"Cursors.Cross": "Cross",
+					"Cursors.WaitCursor": "Wait",
+					"Cursors.IBeam": "IBeaM"
+				}
+			}
+		],
+		"Code": "%control%.Cursor=%cursor%",
+		"CustomSubs": ""
+	},
+	{
+		"Name": "Set Form Size (ClientSize)",
+		"Parameters": [
+			{
+				"Id": "width",
+				"Type": "Expr",
+				"Required": true
+			},
+			{
+				"Id": "height",
+				"Type": "Expr",
+				"Required": true
+			}
+		],
+		"Code": "Me.ClientSize=New System.Drawing.Size(%width%,%height%)",
+		"CustomSubs": ""
+	},
+	{
+		"Name": "Set Form Title",
+		"Parameters": [
+			{
+				"Id": "Text",
+				"Type": "Str",
+				"Required": true
+			}
+		],
+		"Code": "Me.Text=%Text%",
+		"CustomSubs": ""
+	},
+	{
+		"Name":"control redraw",
+		"Parameters":[
+			{
+				"Id":"control",
+				"Type":"Expr",
+				"Required":true
+			}
+		],
+		"Code":"%control%.Invalidate()"
+	},
+	{
+		"Name":"get ResourceStream of embedded file",
+		"Parameters":[
+			{
+				"Id":"filename",
+				"Type":"Str",
+				"Required":true
+			},
+			{
+				"Id":"savetovar",
+				"Type":"Expr",
+				"Required":true
+			}
+		],
+		"Code":"'here is the event for getting embedded file of %filename% and saving it to s_%savetovar%",
+		"CustomSubs":"Dim s_%savetovar%=Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(%filename%)"
+	},
+	{
+		"Name":"get Image from ResourceStream",
+		"Parameters":[
+			{
+				"Id":"ResourceStream",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"savetovar",
+				"Type":"Expr",
+				"Required":true
+			}
+		],
+		"Code":"'here is the event for getting image from resourcestream of %ResourceStream% and saving it to i_%savetovar%",
+		"CustomSubs":"Dim i_%savetovar% As Image= Image.FromStream(s_%ResourceStream%)"
+	},
+	{
+		"Name":"Graphics DrawRectangle",
+		"Parameters":[
+			{
+				"Id":"picturebox",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"Color",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"x",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"y",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"w",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"h",
+				"Type":"Expr",
+				"Required":true
+			}
+		],
+		"Code":"%picturebox%_g.DrawRectangle(%Color%,%x%,%y%,%w%,%h%)"
+	},
+	{
+		"Name":"Graphics DrawString",
+		"Parameters":[
+			{
+				"Id":"picturebox",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"String",
+				"Type":"Str",
+				"Required":true
+			},
+			{
+				"Id":"Font",
+				"Type":"Str",
+				"Required":true
+			},
+			{
+				"Id":"FontSize",
+				"Type":"Expr",
+				"Required":false,
+				"Default":"16"
+			},
+			{
+				"Id":"Color",
+				"Type":"Expr",
+				"Required":false,
+				"Default":"Brushes.Black"
+			},
+			{
+				"Id":"x",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"y",
+				"Type":"Expr",
+				"Required":true
+			}
+		],
+		"Code":"%picturebox%_g.DrawString(%String%,New Font(%Font%,%FontSize%),%Color%,%x%,%y%)"
+	},
+	{
+		"Name":"Graphics DrawImage",
+		"Parameters":[
+			{
+				"Id":"picturebox",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"Image",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"x",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"y",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"w",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"h",
+				"Type":"Expr",
+				"Required":true
+			}
+		],
+		"Code":"%picturebox%_g.DrawImage(i_%Image%,%x%,%y%,%w%,%h%)"
+	},
+	{
+		"Name":"Graphics DrawImage part of image",
+		"Parameters":[
+			{
+				"Id":"picturebox",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"Image",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"x",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"y",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"w",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"h",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"ImagePart_x1",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"ImagePart_y1",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"ImagePart_x2",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"ImagePart_y2",
+				"Type":"Expr",
+				"Required":true
+			}
+		],
+		"Code":"Dim _sr As New Rectangle(%ImagePart_x1%,%ImagePart_y1%,%ImagePart_x2%,%ImagePart_y2%)\nDim _dr As New Rectangle(%x%,%y%,%w%,%h%)\n%picturebox%_g.DrawImage(i_%Image%,_sr,_dr,GraphicsUnit.Pixel)"
+	},
+	{
+		"Name":"enable KeyPreview",
+		"Parameters":[
+			{
+				"Id":"enable",
+				"Type":"Bool",
+				"Required":true
+			}
+		],
+		"Code":"Me.KeyPreview=%enable%"
+	},
+	{
+		"Name":"add to ListBox",
+		"Parameters":[
+			{
+				"Id":"ListBox",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"Item",
+				"Type":"Str",
+				"Required":true
+			}
+		],
+		"Code":"%ListBox%.Items.Add(%Item%)"
+	}
+]
