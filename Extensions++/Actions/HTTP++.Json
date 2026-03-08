@@ -1,0 +1,48 @@
+[
+	{
+		"SpecialType": "ExtensionData",
+		"Name": "HTTP++",
+		"Version": "0.0.1",
+		"Developer": "RO INC",
+		"Website": "https://ro-inc.xyz/"
+	},
+	{
+		"Name": "Get Request",
+		"Parameters": [
+			{
+				"Id": "URL",
+				"Type": "Str",
+				"Required": true
+			},
+			{
+				"Id": "Sub(String,StatusCode)",
+				"Type": "Expr",
+				"Required": true
+			}
+		],
+		"Code": "httppp_HttpGet(%URL%,AddressOf %Sub(String,StatusCode)%)",
+		"CustomSubs": ""
+	},
+	{
+		"Name": "Post Request",
+		"Parameters": [
+			{
+				"Id": "URL",
+				"Type": "Str",
+				"Required": true
+			},
+			{
+				"Id": "Sub(String,StatusCode)",
+				"Type": "Expr",
+				"Required": true
+			},
+			{
+				"Id": "PostData",
+				"Type": "Str",
+				"Required": true
+			}
+		],
+		"Code": "httppp_HttpPost(%URL%,AddressOf %PostData%,%Sub(String,StatusCode)%)",
+		"CustomSubs": ""
+	}
+]
