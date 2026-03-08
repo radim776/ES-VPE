@@ -1,0 +1,27 @@
+[
+	{
+		"SpecialType": "ExtensionData",
+		"Name": "CustomSub++",
+		"Version": "1.0.0",
+		"Developer": "RO INC",
+		"Website": "http://ro-inc.xyz/"
+	},
+	{
+		"Name": "CustomSub++",
+		"Parameters": [
+			{
+				"Id": "subname",
+				"Type": "Expr",
+				"Required": true
+			},
+			{
+				"Id": "subparams",
+				"Type": "Expr",
+				"Required": true
+			}
+		],
+		"InitComponent": "",
+		"Subname": "%subname%",
+		"Subparams": "%subparams%"
+	}
+]
