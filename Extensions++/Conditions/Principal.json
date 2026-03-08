@@ -1,0 +1,28 @@
+[
+	{
+		"SpecialType": "ExtensionData",
+		"Name": "Principal",
+		"Version": "0.0.1",
+		"Developer": "RO INC",
+		"Website": "https://ro-inc.xyz"
+	},
+	{
+		"Name": "Is administrator",
+		"Parameters": [
+
+		],
+		"Prep": "",
+		"IfLine": "If pExt_IsAdministrator() Then",
+		"EndLine": "End If"
+	}
+	,
+	{
+		"Name": "Is Not administrator",
+		"Parameters": [
+
+		],
+		"Prep": "",
+		"IfLine": "If Not pExt_IsAdministrator() Then",
+		"EndLine": "End If"
+	}
+]
