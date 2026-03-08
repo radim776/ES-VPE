@@ -1,0 +1,89 @@
+[
+	{
+		"SpecialType": "ExtensionData",
+		"Name": "OS++",
+		"Version": "0.0.1",
+		"Developer": "RO INC",
+		"Website": "https://ro-inc.xyz/"
+	},
+	{
+		"Name": "command line args save to var",
+		"Parameters": [
+			{
+				"Id": "varToSaveTo",
+				"Type": "Expr",
+				"Required": true
+			},
+			{
+				"Id": "cmdlineargsnum",
+				"Type": "NumInt",
+				"Required": false
+			}
+		],
+		"Code": "%varToSaveTo%=My.Application.CommandLineArgs(%cmdlineargsnum%)",
+		"CustomSubs": ""
+	},
+	{
+		"Name": "execute command with output",
+		"Parameters": [
+			{
+				"Id": "Command",
+				"Type": "Str",
+				"Required": true
+			},
+			{
+				"Id": "Arguments",
+				"Type": "Str",
+				"Required": true
+			},
+			{
+				"Id": "Output_To",
+				"Type": "Expr",
+				"Required": false,
+				"Default":""
+			}
+		],
+		"Code": "%Output_To%=ospp_RunCommand(%Command%,%Arguments%)",
+		"CustomSubs": "Public Function ospp_RunCommand(command As String, arguments As String) As String\nDim process As New Process()\nDim startInfo As New ProcessStartInfo()\nstartInfo.FileName = command\nstartInfo.Arguments = arguments\nstartInfo.RedirectStandardOutput = True\nstartInfo.RedirectStandardError = True\nstartInfo.UseShellExecute = False\nstartInfo.CreateNoWindow = True\nprocess.StartInfo = startInfo\nDim output As New System.Text.StringBuilder()\nprocess.Start()\noutput.Append(process.StandardOutput.ReadToEnd())\noutput.Append(process.StandardError.ReadToEnd())\n'process.WaitForExit()\nReturn output.ToString()\nEnd Function"
+	},
+	{
+		"Name": "execute command with output lines",
+		"Parameters": [
+			{
+				"Id": "Command",
+				"Type": "Str",
+				"Required": true
+			},
+			{
+				"Id": "Arguments",
+				"Type": "Str",
+				"Required": true
+			},
+			{
+				"Id": "Sub_To_Call",
+				"Type": "Expr",
+				"Required": true
+			}
+		],
+		"Code": "ospp_RunCommandWithCallback(%Command%,%Arguments%,AddressOf %Sub_To_Call%)",
+		"CustomSubs": "Public Sub ospp_RunCommandWithCallback(command As String, arguments As String, callback As System.Action(Of String))\n\tDim p As New Process()\n\tDim si As New ProcessStartInfo()\n\n\tsi.FileName = command\n\tsi.Arguments = arguments\n\tsi.RedirectStandardOutput = True\n\tsi.RedirectStandardError = True\n\tsi.UseShellExecute = False\n\tsi.CreateNoWindow = True\n\tsi.EnvironmentVariables(\"PYTHONUNBUFFERED\") = \"1\"\n\n\tp.StartInfo = si\n\tp.Start()\n\n\tDim t1 As New Threading.Thread(Sub()\n\t\tWhile Not p.StandardOutput.EndOfStream\n\t\t\tDim line As String = p.StandardOutput.ReadLine()\n\t\t\tIf line IsNot Nothing Then callback(line)\n\t\tEnd While\n\tEnd Sub)\n\n\tDim t2 As New Threading.Thread(Sub()\n\t\tWhile Not p.StandardError.EndOfStream\n\t\t\tDim line As String = p.StandardError.ReadLine()\n\t\t\tIf line IsNot Nothing Then callback(line)\n\t\tEnd While\n\tEnd Sub)\n\n\tt1.IsBackground = True\n\tt2.IsBackground = True\n\n\tt1.Start()\n\tt2.Start()\nEnd Sub"
+	},
+	{
+		"Name": "custom",
+		"Parameters": [
+			{
+				"Id": "code",
+				"Type": "Expr",
+				"Required": true
+			},
+			{
+				"Id": "customsubs",
+				"Type": "Expr",
+				"Required": false,
+				"Default":""
+			}
+		],
+		"Code": "%code%",
+		"CustomSubs": "%customsubs%"
+	}
+]
