@@ -1,0 +1,21 @@
+[
+    {
+        "SpecialType": "ExtensionData",
+        "Name": "ScreenShot",
+        "Version": "1.0.0",
+        "Developer": "RO INC",
+        "Website": "https://ro-inc.xyz/"
+    },
+    {
+        "Name": "Screenshot Primary Screen",
+        "Parameters": [
+            {
+                "Id": "savetopath",
+                "Type": "Str",
+                "Required": true
+            }
+        ],
+        "Code": "ScreenShotPrimaryScreen(%savetopath%)",
+        "CustomSubs": "Sub ScreenShotPrimaryScreen(SaveToPath As String)\n\t\t' Get the size of the primary screen\n\t\tDim screenSize As Size = Screen.PrimaryScreen.Bounds.Size\n\n\t\t' Create a bitmap of that size\n\t\tUsing bmp As New Bitmap(screenSize.Width, screenSize.Height)\n\t\t\t' Draw the screen into the bitmap\n\t\t\tUsing g As Graphics = Graphics.FromImage(bmp)\n\t\t\t\tg.CopyFromScreen(0, 0, 0, 0, screenSize)\n\t\t\tEnd Using\n\n\t\t\t' Save the bitmap to the provided path\n\t\t\tbmp.Save(SaveToPath, ImageFormat.Png)\n\t\tEnd Using\n\tEnd Sub"
+    }
+]
