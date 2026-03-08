@@ -1,0 +1,17 @@
+[
+	{
+		"SpecialType": "ExtensionData",
+		"Name": "Principal",
+		"Version": "0.0.1",
+		"Developer": "RO INC",
+		"Website": "https://ro-inc.xyz/"
+	},
+	{
+		"Name": "ensure administrator",
+		"Parameters": [
+
+		],
+		"Code": "pExt_EnsureAdministrator()",
+		"CustomSubs": ""
+	}
+]
