@@ -1,0 +1,16 @@
+[
+    {
+        "SpecialType": "ExtensionData",
+        "Name": "ScreenShot IMPORTS",
+        "Version": "1.0.0",
+        "Developer": "RO INC",
+        "Website": "https://ro-inc.xyz"
+    },
+    {
+        "imaging": {
+            "Imports": "Imports System.Drawing.Imaging",
+            "DLLImport": "",
+            "CustomSubs": ""
+        }
+    }
+]
