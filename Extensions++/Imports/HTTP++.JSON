@@ -1,0 +1,16 @@
+[
+    {
+        "SpecialType": "ExtensionData",
+        "Name": "HTTP++",
+        "Version": "0.0.1",
+        "Developer": "RO INC",
+        "Website": "https://ro-inc.xyz/"
+    },
+    {
+        "HTTP++ import": {
+            "Imports": "Imports System.Net\nImports System.Text\nImports System.Threading\nImports System.Threading.Tasks",
+            "DLLImport": "",
+            "CustomSubs": "Public Sub httppp_HttpGet(url As String, callback As Action(Of String, Integer))\n\t\tThreadPool.QueueUserWorkItem(Sub()\n\t\t\tTry\n\t\t\t\tDim request As HttpWebRequest = CType(WebRequest.Create(url), HttpWebRequest)\n\t\t\t\trequest.Method = \"GET\"\n\n\t\t\t\tDim response As HttpWebResponse = CType(request.GetResponse(), HttpWebResponse)\n\n\t\t\t\tDim reader As New StreamReader(response.GetResponseStream())\n\t\t\t\tDim content As String = reader.ReadToEnd()\n\n\t\t\t\tcallback.Invoke(content, CInt(response.StatusCode))\n\t\t\tCatch ex As Exception\n\t\t\t\tcallback.Invoke(ex.Message, -1)\n\t\t\tEnd Try\n\t\tEnd Sub)\n\tEnd Sub\n\n\tPublic Sub httppp_HttpPost(url As String, body As String, callback As Action(Of String, Integer))\n\t\tThreadPool.QueueUserWorkItem(Sub()\n\t\t\tTry\n\t\t\t\tDim request As HttpWebRequest = CType(WebRequest.Create(url), HttpWebRequest)\n\t\t\t\trequest.Method = \"POST\"\n\t\t\t\trequest.ContentType = \"application/json\"\n\n\t\t\t\tDim data As Byte() =System.Text.Encoding.UTF8.GetBytes(body)\n\t\t\t\trequest.ContentLength = data.Length\n\n\t\t\t\tUsing stream = request.GetRequestStream()\n\t\t\t\t\tstream.Write(data, 0, data.Length)\n\t\t\t\tEnd Using\n\n\t\t\t\tDim response As HttpWebResponse = CType(request.GetResponse(), HttpWebResponse)\n\n\t\t\t\tDim reader As New StreamReader(response.GetResponseStream())\n\t\t\t\tDim content As String = reader.ReadToEnd()\n\n\t\t\t\tcallback.Invoke(content, CInt(response.StatusCode))\n\t\t\tCatch ex As Exception\n\t\t\t\tcallback.Invoke(ex.Message, -1)\n\t\t\tEnd Try\n\t\tEnd Sub)\n\tEnd Sub"
+        }
+    }
+]
