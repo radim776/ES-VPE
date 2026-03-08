@@ -1,0 +1,16 @@
+[
+	{
+		"SpecialType": "ExtensionData",
+		"Name": "HTTP++",
+		"Version": "0.0.1",
+		"Developer": "RO INC",
+		"Website": "https://ro-inc.xyz/"
+	},
+	{
+		"principal import": {
+			"Imports": "Imports System.Security.Principal",
+			"DLLImport": "",
+			"CustomSubs": "Function pExt_IsAdministrator() As Boolean\n\t\tDim identity As WindowsIdentity = WindowsIdentity.GetCurrent()\n\t\tDim principal As New WindowsPrincipal(identity)\n\t\tReturn principal.IsInRole(WindowsBuiltInRole.Administrator)\n\tEnd Function\n\n\tSub pExt_EnsureAdministrator()\n\n\t\tIf Not pExt_IsAdministrator() Then\n\n\t\t\tDim startInfo As New ProcessStartInfo()\n\t\t\tstartInfo.FileName = Process.GetCurrentProcess().MainModule.FileName\n\t\t\tstartInfo.UseShellExecute = True\n\t\t\tstartInfo.Verb = \"runas\"\n\n\t\t\tTry\n\t\t\t\tProcess.Start(startInfo)\n\t\t\tCatch ex As Exception\n\t\t\t\t' User probably canceled the UAC prompt\n\t\t\tEnd Try\n\n\t\t\tEnvironment.Exit(0)\n\n\t\tEnd If\n\n\tEnd Sub"
+		}
+	}
+]
