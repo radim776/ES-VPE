@@ -6,7 +6,7 @@ allow u to make EXE files in small file size very easily , has extension support
 ( VPE = Visual Programming Enviroment )
 
 # DOWNLOAD
-https://github.com/radim776/ES-IDE/releases/tag/Release
+https://github.com/radim776/ES-VPE/releases
 
 # HOW TO COMPILE
 Step 1.<br>
@@ -22,4 +22,4 @@ Press RUN button<br>
 Done!
 
 # BADGES
-![hshsha](https://img.shields.io/badge/build-passing-brightgreen?style=for-the-badge)
+![build passing](https://img.shields.io/badge/build-passing-brightgreen?style=for-the-badge)
