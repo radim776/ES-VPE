@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
@@ -24,8 +25,9 @@ namespace EventScriptIDE
         Panel _groupsPanel;          // auto-scroll panel holding dynamic group cards
         ListBox _varList;
         ListBox _ctrlList;
+		Panel _insertLine;
 
-        public static string ResourcePath = Path.Combine(Application.StartupPath, "Resource");
+		public static string ResourcePath = Path.Combine(Application.StartupPath, "Resource");
         public static class IDETheme
         {/*
             public static Color Back = Color.FromArgb(240, 240, 240);
@@ -37,7 +39,9 @@ namespace EventScriptIDE
             public static Color Fore = Color.FromArgb(220, 220, 220);
             public static Color CanvasBack = Color.FromArgb(37, 37, 38);
             public static Color ListBack = Color.FromArgb(45, 45, 48);
-            public static Color HeaderFore = Color.FromArgb(240, 240, 240);
+			public static Color ListBack2 = Color.FromArgb(60, 60, 64);
+			public static Color CanvasBack2 = Color.FromArgb(48, 48, 64);
+			public static Color HeaderFore = Color.FromArgb(240, 240, 240);
             public static Color Accent = ColorTranslator.FromHtml("#5900ff");
             public static Color AccentDark = ColorTranslator.FromHtml("#2d0080");
         }
@@ -47,7 +51,7 @@ namespace EventScriptIDE
             _settings = SettingsManager.Load();
             ExtensionRegistry.Reload();
 
-            Text = "ES IDE";
+            Text = "ES VPE";
             Size = new Size(1280, 720);
             MinimumSize = new Size(900, 600);
             Font = new Font("Segoe UI", 9f);
@@ -169,7 +173,7 @@ namespace EventScriptIDE
             file.DropDownItems.Add(MItem("Save Project",SaveIcon, Keys.Control | Keys.S, (s, e) => SaveProject()));
             file.DropDownItems.Add(MItem("Save Project As…",SaveIcon, Keys.None, (s, e) => SaveProjectAs()));
             file.DropDownItems.Add(new ToolStripSeparator());
-            file.DropDownItems.Add(MItem("IDE Settings",SettingsIcon, Keys.None, (s, e) => OpenIdeSettings()));
+            file.DropDownItems.Add(MItem("VPE Settings", SettingsIcon, Keys.None, (s, e) => OpenIdeSettings()));
             file.DropDownItems.Add(MItem("Refresh", ReloadIcon, Keys.F5, (s, e) => Refresh2()));
             file.DropDownItems.Add(new ToolStripSeparator());
             file.DropDownItems.Add(MItem("Exit",ExitIcon, Keys.None, (s, e) => Close()));
@@ -359,7 +363,14 @@ namespace EventScriptIDE
                 Top = 8,
                 Font = new Font("Segoe UI", 9f),
             };
-            topBar.Controls.Add(_infoLabel);
+			_insertLine = new Panel
+			{
+				Height = 2,
+				BackColor = Color.Red,
+				Visible = false,
+				Enabled = false
+			};
+			topBar.Controls.Add(_infoLabel);
 
             var settingsBtn = Helpers.MakeBtn("PROJECT SETTINGS", Helpers.BtnDarkGray, Color.White, (s, e) => ProjectSettings(), 0, 26);
             settingsBtn.Anchor = AnchorStyles.Right | AnchorStyles.Top;
@@ -565,7 +576,7 @@ namespace EventScriptIDE
                 "  |  " + p.Controls.Count + " control(s)";
             _infoLabel.Font = _fontSegoeTinyBold;
 
-            var title = "ES IDE - " + p.Name;
+            var title = "ES VPE - " + p.Name;
             if (_projectPath != null) title += "  [" + Path.GetFileName(_projectPath) + "]";
             Text = title;
         }
@@ -604,7 +615,9 @@ namespace EventScriptIDE
         // ═════════════════════════════════════════════════════════════════════
         private static ItemDefinition _clipboard = null;
         private static string _clipboardKind = null;
-        Image DeleteIcon = Image.FromFile(Path.Combine(ResourcePath,"Delete.png"));
+		static readonly string MonoFont = "Courier New";
+		static readonly Font _fontCb10 = new Font(MonoFont, 10f, FontStyle.Bold);
+		Image DeleteIcon = Image.FromFile(Path.Combine(ResourcePath,"Delete.png"));
         Image UpIcon = Image.FromFile(Path.Combine(ResourcePath,"Up.png"));
         Image DownIcon = Image.FromFile(Path.Combine(ResourcePath,"Down.png"));
         Image RenameIcon = Image.FromFile(Path.Combine(ResourcePath,"Rename.png"));
@@ -615,14 +628,20 @@ namespace EventScriptIDE
             var outer = new Panel
             {
                 Dock = DockStyle.Top,
-                BackColor = Helpers.GroupBodyBg,
+                //BackColor = Helpers.GroupBodyBg,
                 Padding = new Padding(0, 0, 0, 6),
-                AutoSize = true,
+				AutoSize = true,
                 AutoSizeMode = AutoSizeMode.GrowAndShrink,
-            };
+				BorderStyle = BorderStyle.FixedSingle,
+				BackColor = IDETheme.CanvasBack2
+			};
 
-            // ── Header ────────────────────────────────────────────────────────
-            var hdr = new Panel { Dock = DockStyle.Top, Height = 30, BackColor = Helpers.GroupHeaderBg };
+			var hdr = new Panel
+			{
+				Dock = DockStyle.Top,
+				Height = 30,
+				BackColor = IDETheme.CanvasBack2,
+			};
 
             var trig = group.Trigger;
             var ttype = trig.Type;
@@ -635,8 +654,8 @@ namespace EventScriptIDE
             {
                 Text = group.Name,
                 ForeColor = Color.White,
-                BackColor = Helpers.GroupHeaderBg,
-                Font = new Font("Courier New", 10f, FontStyle.Bold),
+                //BackColor = Helpers.GroupHeaderBg,
+                Font = _fontCb10,
                 AutoSize = true,
                 Left = 8,
                 Top = 6,
@@ -645,10 +664,10 @@ namespace EventScriptIDE
             {
                 Text = "⚡ " + trigLbl,
                 ForeColor = Color.FromArgb(0x7e, 0xb4, 0xff),
-                BackColor = Helpers.GroupHeaderBg,
+                //BackColor = Helpers.GroupHeaderBg,
                 Font = _fontSegoeTinyBold,
                 AutoSize = true,
-                Left = 8 + TextRenderer.MeasureText(group.Name, new Font("Courier New", 10f, FontStyle.Bold)).Width + 8,
+                Left = 8 + TextRenderer.MeasureText(group.Name, _fontCb10).Width + 8,
                 Top = 8,
             });
             
@@ -678,24 +697,79 @@ namespace EventScriptIDE
             var inner = new Panel
             {
                 Dock = DockStyle.Top,
-                BackColor = Helpers.GroupBodyBg,
-                Padding = new Padding(4, 2, 4, 0),
+				//BackColor = Helpers.GroupBodyBg,
+				//BackColor = IDETheme.ListBack,
+				BackColor = IDETheme.CanvasBack2,
+				Padding = new Padding(4, 2, 4, 0),
                 AutoSize = true,
                 AutoSizeMode = AutoSizeMode.GrowAndShrink,
-            };
+				AllowDrop = true,          // allow dropping even if empty
+				MinimumSize = new Size(0, 30) // visible drop area
+			};
 
-            if (group.Events.Count == 0)
+			inner.DragOver += (s, de) =>
+			{
+				de.Effect = DragDropEffects.Move;
+
+				var pt = inner.PointToClient(new Point(de.X, de.Y));
+
+				if (de.Effect == DragDropEffects.None)
+					HideInsertLine();
+				else
+					ShowInsertLine(inner, pt.Y);
+			};
+
+			inner.DragLeave += (s, e) =>
+			{
+				HideInsertLine();
+			};
+
+			inner.DragDrop += (s, de) =>
+			{
+				HideInsertLine();
+
+				var raw = de.Data.GetData(DataFormats.StringFormat) as string;
+				if (string.IsNullOrEmpty(raw)) return;
+
+				var parts = raw.Split('|');
+				if (parts[0] != "event") return;
+
+				int srcGi = int.Parse(parts[1]);
+				int srcEi = int.Parse(parts[2]);
+
+				var ev = _project.EventGroups[srcGi].Events[srcEi];
+				_project.EventGroups[srcGi].Events.RemoveAt(srcEi);
+
+				var dstList = _project.EventGroups[gi].Events;
+
+				var pt = inner.PointToClient(new Point(de.X, de.Y));
+
+				// empty group? insert at 0
+				int insertIndex = dstList.Count == 0 ? 0 : GetInsertIndexFromY(inner, pt.Y, null);
+				insertIndex = dstList.Count - insertIndex;
+				if (insertIndex < 0) insertIndex = 0;
+				if (insertIndex > dstList.Count) insertIndex = dstList.Count;
+
+				dstList.Insert(insertIndex, ev);
+
+				RefreshGroups();
+			};
+
+			if (group.Events.Count == 0)
             {
-                inner.Controls.Add(new Label
-                {
-                    Text = "  (no events)",
-                    ForeColor = Color.DimGray,
-                    BackColor = Helpers.GroupBodyBg,
-                    AutoSize = true,
-                    Font = new Font("Segoe UI", 8f, FontStyle.Italic),
-                    Padding = new Padding(0, 4, 0, 4),
-                });
-            }
+				inner.AllowDrop = true;
+				inner.MinimumSize = new Size(0, 30);
+				/*inner.Controls.Add(new Label
+				{
+					Text = "  (no events)",
+					ForeColor = Color.DimGray,
+					BackColor = Helpers.GroupBodyBg,
+					AutoSize = true,
+					Font = new Font("Segoe UI", 8f, FontStyle.Italic),
+					Padding = new Padding(0, 4, 0, 4),
+					AllowDrop = false
+				});*/
+			}
             else
             {
                 for (int ei = group.Events.Count - 1; ei >= 0; ei--)
@@ -706,161 +780,297 @@ namespace EventScriptIDE
             outer.Controls.Add(hdr);
             return outer;
         }
-
-        // Cached fonts (allocated once, reused everywhere)
-        static readonly Font _fontSegoeSmBold = new Font("Courier New", 10f, FontStyle.Bold);
+        static readonly Font _fontSegoeSmBold = new Font(MonoFont, 11f, FontStyle.Bold);
         static readonly Font _fontSegoeTinyBold = new Font("Verdana", 8f, FontStyle.Bold);
         static readonly Font _fontSegoeBigBold = new Font("Verdana", 12f, FontStyle.Bold);
         static readonly Font _fontSegoeBigRg = new Font("Verdana", 12f, FontStyle.Regular);
-        public Font _fontCourier = new Font("Courier New", 8f);
+		public Font _fontCourier = new Font(MonoFont, 8f);
 
-        Panel BuildEventCard(int gi, int ei, EventModel ev)
-        {
-            var card = new Panel
-            {
-                Dock = DockStyle.Top,
-                BackColor = Helpers.EventBodyBg,
-                Padding = new Padding(2),
-                AutoSize = true,
-                AutoSizeMode = AutoSizeMode.GrowAndShrink,
-                Margin = new Padding(0, 3, 0, 0),
-            };
+		Panel BuildEventCard(int gi, int ei, EventModel ev)
+		{
+			var card = new Panel
+			{
+				Dock = DockStyle.Top,
+				//BackColor = Helpers.EventBodyBg,
+				BackColor = IDETheme.Back,
+				Padding = new Padding(2),
+				AutoSize = true,
+				AutoSizeMode = AutoSizeMode.GrowAndShrink,
+				Margin = new Padding(0, 3, 0, 0),
+				AllowDrop = true,
+			};
 
-            // Event header
-            var ehdr = new Panel { Dock = DockStyle.Top, Height = 26, BackColor = Helpers.EventHeaderBg };
+			// Event header
+			var ehdr = new Panel
+			{
+				Dock = DockStyle.Top,
+				Height = 26,
+				//BackColor = Helpers.EventHeaderBg
+				BackColor = IDETheme.Back,
+			};
 
-            ehdr.Controls.Add(new Label
-            {
-                Text = " > " + ev.Name,
-                ForeColor = Color.White,
-                BackColor = Helpers.EventHeaderBg,
-                Font = _fontSegoeSmBold,
-                AutoSize = true,
-                Left = 2,
-                Top = 5,
-            });
+			var evtHandle = new Panel
+			{
+				Width = 14,
+				Dock = DockStyle.Left,
+				Cursor = Cursors.SizeAll,
+				BackColor = IDETheme.ListBack,
+				BorderStyle = BorderStyle.FixedSingle,
+				Tag = "event-handle"
+			};
+			evtHandle.MouseDown += (s, e) =>
+			{
+				if (e.Button != MouseButtons.Left) return;
+				var data = $"event|{gi}|{ei}";
+				evtHandle.DoDragDrop(data, DragDropEffects.Move);
+			};
 
-            var btnX = MakeHdrBtn("✖", Helpers.BtnRed, (s, e) => DelEvent(gi, ei),DeleteIcon);
-            var btnDown = MakeHdrBtn("▼", Helpers.BtnGreen, (s, e) => MoveEvent(gi, ei, 1),DownIcon);
-            var btnUp = MakeHdrBtn("▲", Helpers.BtnGreen, (s, e) => MoveEvent(gi, ei, -1),UpIcon);
-            var btnRename = MakeHdrBtn("REN", Helpers.BtnDarkBlue, (s, e) => RenameEvent(gi, ei),RenameIcon);
-            
-            int totalBtnW = 0;
-            var hdrBtns = new[] { btnX, btnDown, btnUp, btnRename };
-            foreach (var b in hdrBtns) totalBtnW += b.Width + 2;
+			ehdr.Controls.Add(evtHandle);
 
-            ehdr.Controls.AddRange(hdrBtns);
-            ehdr.Resize += (s2, e2) =>
-            {
-                int x = ehdr.Width - 4;
-                foreach (var b in hdrBtns)
-                {
-                    x -= b.Width + 2;
-                    b.Left = x;
-                    b.Top = 2;
-                }
-            };
+			ehdr.Controls.Add(new Label
+			{
+				Text = "  > " + ev.Name,
+				ForeColor = Color.White,
+				//BackColor = Helpers.EventHeaderBg,
+				BackColor = IDETheme.Back,
+				Font = _fontSegoeSmBold,
+				AutoSize = true,
+				Left = 2,
+				Top = 5,
+			});
 
-            // Conditions / Actions columns
-            cols = new TableLayoutPanel
-            {
-                Dock = DockStyle.Top,
-                ColumnCount = 2,
-                RowCount = 1,
-                BackColor = Helpers.EventBodyBg,
-                AutoSize = true,
-                AutoSizeMode = AutoSizeMode.GrowAndShrink,
-            };
-            cols.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50f));
-            cols.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50f));
-            cols.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+			var btnX = MakeHdrBtn("✖", Helpers.BtnRed, (s, e) => DelEvent(gi, ei), DeleteIcon);
+			//var btnDown = MakeHdrBtn("▼", Helpers.BtnGreen, (s, e) => MoveEvent(gi, ei, 1), DownIcon); // commented out - drag now used
+			//var btnUp = MakeHdrBtn("▲", Helpers.BtnGreen, (s, e) => MoveEvent(gi, ei, -1), UpIcon); // commented out - drag now used
+			var btnRename = MakeHdrBtn("REN", Helpers.BtnDarkBlue, (s, e) => RenameEvent(gi, ei), RenameIcon);
 
-            cols.Controls.Add(BuildItemsPanel(gi, ei, ev.Conditions, "CONDITIONS", Helpers.CondBg, Helpers.CondFg,Helpers.BtnCondGreen, "conditions"), 0, 0);
-            cols.Controls.Add(BuildItemsPanel(gi, ei, ev.Actions, "ACTIONS", Helpers.ActBg, Helpers.ActFg, Helpers.BtnActPurple, "actions"), 1, 0);
-            
-            card.Controls.Add(cols);
-            card.Controls.Add(ehdr);
-            return card;
-        }
-        private TableLayoutPanel cols = null;
-        Panel BuildItemsPanel(int gi, int ei, List<ItemDefinition> items, string title,
-                              Color bg, Color fg, Color addBtnColor, string key)
-        {
-            var panel = new Panel
-            {
-                Dock = DockStyle.Fill,
-                BackColor = bg,
-                Padding = new Padding(2),
-                AutoSize = true,
-                AutoSizeMode = AutoSizeMode.GrowAndShrink,
-            };
+			int totalBtnW = 0;
+			//var hdrBtns = new[] { btnX, btnDown, btnUp, btnRename };
+			var hdrBtns = new[] { btnX, btnRename };
+			foreach (var b in hdrBtns) totalBtnW += b.Width + 2;
 
-            var lbl = new Label
-            {
-                Text = title,
-                ForeColor = fg,
-                BackColor = bg,
-                Font = _fontSegoeTinyBold,
-                AutoSize = true,
-                Padding = new Padding(2),
-            };
+			ehdr.Controls.AddRange(hdrBtns);
+			ehdr.Resize += (s2, e2) =>
+			{
+				int x = ehdr.Width - 4;
+				foreach (var b in hdrBtns)
+				{
+					x -= b.Width + 2;
+					b.Left = x;
+					b.Top = 2;
+				}
+			};
 
-            var ButtonsHolder = new Panel
-            {
-                Dock=DockStyle.Bottom,
-                Height=22
-            };
+			// Conditions / Actions columns
+			cols = new TableLayoutPanel
+			{
+				Dock = DockStyle.Top,
+				ColumnCount = 2,
+				RowCount = 1,
+				//BackColor = Helpers.EventBodyBg,
+				BackColor = IDETheme.Back,
+				AutoSize = true,
+				AutoSizeMode = AutoSizeMode.GrowAndShrink
+			};
+			cols.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50f));
+			cols.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50f));
+			cols.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 
-            var addBtn = Helpers.MakeBtn("＋ ADD " + title.TrimEnd('S'), addBtnColor, Color.White,
-                (s2, e2) =>
-                {
-                    if (key == "conditions") AddCondition(gi, ei);
-                    else AddAction(gi, ei);
-                }, 0, 22);
-            addBtn.Dock = DockStyle.Bottom;
+			cols.Controls.Add(BuildItemsPanel(gi, ei, ev.Conditions, "CONDITIONS", Helpers.CondBg, Helpers.CondFg, Helpers.BtnCondGreen, "conditions"), 0, 0);
+			cols.Controls.Add(BuildItemsPanel(gi, ei, ev.Actions, "ACTIONS", Helpers.ActBg, Helpers.ActFg, Helpers.BtnActPurple, "actions"), 1, 0);
 
-            var pasteBtn = Helpers.MakeBtn("PASTE", addBtnColor, Color.White,
-                (s2, e2) =>
-                {
-                    if (_clipboard == null) return;
-                    if (_clipboardKind != key) return;
-                    var pasted = new ItemDefinition
-                    {
-                        Category = _clipboard.Category,
-                        Action = _clipboard.Action,
-                        Params = new Dictionary<string, string>(_clipboard.Params)
-                    };
-                    if (key == "conditions") PasteCondition(gi, ei, pasted);
-                    else PasteAction(gi, ei, pasted);
-                }, 0, 22);
-            pasteBtn.Dock = DockStyle.Left;
+			card.Controls.Add(cols);
+			card.Controls.Add(ehdr);
 
-            var itemsHolder = new Panel
-            {
-                Dock = DockStyle.Top,
-                BackColor = bg,
-                AutoSize = true,
-                AutoSizeMode = AutoSizeMode.GrowAndShrink,
-            };
-            
-            itemsHolder.SuspendLayout();
-            for (int j = items.Count - 1; j >= 0; j--)
-            {
-                var row = BuildItemRow(gi, ei, j, items[j], key, bg, fg, cols);
-                itemsHolder.Controls.Add(row);
-            }
-            itemsHolder.ResumeLayout(false);
-            itemsHolder.PerformLayout();
-            
-            ButtonsHolder.Controls.Add(pasteBtn);   //before addBtn so it appears above it
-            ButtonsHolder.Controls.Add(addBtn);
-            panel.Controls.Add(ButtonsHolder);
-            panel.Controls.Add(addBtn);
-            panel.Controls.Add(itemsHolder);
-            panel.Controls.Add(lbl);
-            return panel;
-        }
-        void PasteCondition(int gi, int ei, ItemDefinition item)
+			card.DragOver += (s, de) =>
+			{
+				de.Effect = DragDropEffects.Move;
+
+				var pt = card.Parent.PointToClient(new Point(de.X, de.Y));
+
+				if (de.Effect == DragDropEffects.None)
+					HideInsertLine();
+				else
+					ShowInsertLine(card.Parent, pt.Y);
+			};
+
+			card.DragLeave += (s, e) =>
+			{
+				HideInsertLine();
+			};
+
+			card.DragDrop += (s, de) =>
+			{
+				HideInsertLine();
+
+				var raw = de.Data.GetData(DataFormats.StringFormat) as string;
+				if (string.IsNullOrEmpty(raw)) return;
+
+				var parts = raw.Split('|');
+				if (parts[0] != "event") return;
+
+				int srcGi = int.Parse(parts[1]);
+				int srcEi = int.Parse(parts[2]);
+
+				var pt = card.Parent.PointToClient(new Point(de.X, de.Y));
+				int insertIndex = GetInsertIndexFromY(card.Parent, pt.Y, card);
+
+				var srcList = _project.EventGroups[srcGi].Events;
+				var ev2 = srcList[srcEi];
+				srcList.RemoveAt(srcEi);
+
+				var dstList = _project.EventGroups[gi].Events;
+
+				if (insertIndex > dstList.Count) insertIndex = dstList.Count;
+
+				dstList.Insert(insertIndex, ev2);
+
+				RefreshGroups();
+			};
+
+			return card;
+		}
+		private TableLayoutPanel cols = null;
+		Panel BuildItemsPanel(int gi, int ei, List<ItemDefinition> items, string title, Color bg, Color fg, Color addBtnColor, string key)
+		{
+			var panel = new Panel
+			{
+				Dock = DockStyle.Fill,
+				BackColor = bg,
+				Padding = new Padding(2),
+				AutoSize = true,
+				//BorderStyle = BorderStyle.FixedSingle,
+				AutoSizeMode = AutoSizeMode.GrowAndShrink,
+			};
+
+			var lbl = new Label
+			{
+				Text = title,
+				ForeColor = fg,
+				BackColor = bg,
+				Font = _fontSegoeTinyBold,
+				AutoSize = true,
+				Padding = new Padding(2),
+			};
+
+			var ButtonsHolder = new Panel
+			{
+				Dock = DockStyle.Bottom,
+				Height = 22
+			};
+
+			var addBtn = Helpers.MakeBtn("＋ ADD " + title.TrimEnd('S'), addBtnColor, Color.White,
+				(s2, e2) =>
+				{
+					if (key == "conditions") AddCondition(gi, ei);
+					else AddAction(gi, ei);
+				}, 0, 22);
+			addBtn.Dock = DockStyle.Bottom;
+
+			var pasteBtn = Helpers.MakeBtn("PASTE", addBtnColor, Color.White,
+				(s2, e2) =>
+				{
+					if (_clipboard == null) return;
+					if (_clipboardKind != key) return;
+					var pasted = new ItemDefinition
+					{
+						Category = _clipboard.Category,
+						Action = _clipboard.Action,
+						Params = new Dictionary<string, string>(_clipboard.Params)
+					};
+					if (key == "conditions") PasteCondition(gi, ei, pasted);
+					else PasteAction(gi, ei, pasted);
+				}, 0, 22);
+			pasteBtn.Dock = DockStyle.Left;
+
+			var itemsHolder = new Panel
+			{
+				Dock = DockStyle.Top,
+				BackColor = bg,
+				AutoSize = true,
+				AutoSizeMode = AutoSizeMode.GrowAndShrink,
+				AllowDrop = true,
+			};
+
+			itemsHolder.MinimumSize = new Size(0, 30);
+			
+			itemsHolder.DragOver += (s, de) =>
+			{
+				if ((de.KeyState & 8) != 0)
+					de.Effect = DragDropEffects.None;
+				else
+					de.Effect = DragDropEffects.Move;
+
+				var pt = itemsHolder.PointToClient(new Point(de.X, de.Y));
+				
+				if (de.Effect == DragDropEffects.None)
+					HideInsertLine();
+				else
+					ShowInsertLine(itemsHolder, pt.Y);
+			};
+
+			itemsHolder.DragLeave += (s, e) =>
+			{
+				HideInsertLine();
+			};
+
+			itemsHolder.DragDrop += (s, de) =>
+			{
+				HideInsertLine();
+
+				var raw = de.Data.GetData(DataFormats.StringFormat) as string;
+				if (string.IsNullOrEmpty(raw)) return;
+
+				var parts = raw.Split('|');
+				if (parts[0] != "item") return;
+
+				int srcGi = int.Parse(parts[1]);
+				int srcEi = int.Parse(parts[2]);
+				string srcKey = parts[3];
+				int srcJ = int.Parse(parts[4]);
+
+				var pt = itemsHolder.PointToClient(new Point(de.X, de.Y));
+				int insertIndex = GetInsertIndexFromY(itemsHolder, pt.Y, null);
+
+				List<ItemDefinition> srcList =
+					srcKey == "conditions"
+					? _project.EventGroups[srcGi].Events[srcEi].Conditions
+					: _project.EventGroups[srcGi].Events[srcEi].Actions;
+
+				var item = srcList[srcJ];
+				srcList.RemoveAt(srcJ);
+
+				List<ItemDefinition> dstList =
+					key == "conditions"
+					? _project.EventGroups[gi].Events[ei].Conditions
+					: _project.EventGroups[gi].Events[ei].Actions;
+
+				if (insertIndex > dstList.Count)
+					insertIndex = dstList.Count;
+
+				dstList.Insert(insertIndex, item);
+
+				RefreshGroups();
+			};
+
+			itemsHolder.SuspendLayout();
+			for (int j = items.Count - 1; j >= 0; j--)
+			{
+				var row = BuildItemRow(gi, ei, j, items[j], key, bg, fg, cols);
+				itemsHolder.Controls.Add(row);
+			}
+			itemsHolder.ResumeLayout(false);
+			itemsHolder.PerformLayout();
+
+			ButtonsHolder.Controls.Add(pasteBtn);
+			ButtonsHolder.Controls.Add(addBtn);
+			panel.Controls.Add(ButtonsHolder);
+			panel.Controls.Add(addBtn);
+			panel.Controls.Add(itemsHolder);
+			panel.Controls.Add(lbl);
+			return panel;
+		}
+		void PasteCondition(int gi, int ei, ItemDefinition item)
         {
             _project.EventGroups[gi].Events[ei].Conditions.Add(item);
             RefreshGroups();
@@ -871,71 +1081,186 @@ namespace EventScriptIDE
             _project.EventGroups[gi].Events[ei].Actions.Add(item);
             RefreshGroups();
         }
-        Panel BuildItemRow(int gi, int ei, int j, ItemDefinition item, string key, Color bg, Color fg, Panel ih)
-        {
-            var row = new Panel
-            {
-                BackColor = bg,
-                Height = 22,
-                Dock = DockStyle.Top,
-                Padding = new Padding(2, 1, 2, 1),
-            };
+		int GetInsertIndexFromY(Control parent, int y, Control skip = null)
+		{
+			var list = parent.Controls.Cast<Control>()
+				.Where(c => c != _insertLine && c != skip)
+				.OrderBy(c => c.Top)
+				.ToList();
 
-            var sb = new System.Text.StringBuilder("[").Append(item.Category).Append("] ").Append(item.Action);
-            bool first = true;
-            foreach (var kvp in item.Params)
-            {
-                if (string.IsNullOrEmpty(kvp.Value)) continue;
-                sb.Append(first ? "  →  " : "  ").Append(kvp.Key).Append('=').Append(kvp.Value);
-                first = false;
-            }
+			if (list.Count == 0)
+				return 0;
 
-            var lbl = new Label
-            {
-                Text = sb.ToString(),
-                ForeColor = fg,
-                BackColor = bg,
-                Font = _fontCourier,
-                AutoSize = true,
-                Dock = DockStyle.Fill,
-                TextAlign = ContentAlignment.MiddleLeft,
-                Padding = new Padding(2, 0, 0, 0),
-            };
-            lbl.MaximumSize = new Size(((this.Width - split.Panel2.Width) / 3), 0);
+			for (int i = 0; i < list.Count; i++)
+			{
+				var c = list[i];
+				int mid = c.Top + c.Height / 2;
 
-            var btnEdit = MakeHdrBtn("✎", Helpers.BtnBlue, (s, e) => EditItem(gi, ei, key, j), EditIcon);
-            var btnDel = MakeHdrBtn("✖", Helpers.BtnRed, (s, e) => DelItem(gi, ei, key, j), DeleteIcon);
-            var btnDown = MakeHdrBtn("▼", Helpers.BtnDarkGray, (s, e) => MoveItem(gi, ei, key, j, 1), DownIcon);
-            var btnUp = MakeHdrBtn("▲", Helpers.BtnDarkGray, (s, e) => MoveItem(gi, ei, key, j, -1), UpIcon);
-            var btnCopy = MakeHdrBtn("⧉", Helpers.BtnDarkBlue, (s, e) =>
-            {
-                _clipboard = new ItemDefinition
-                {
-                    Category = item.Category,
-                    Action = item.Action,
-                    Params = new Dictionary<string, string>(item.Params)
-                };
-                _clipboardKind = key;
-            }, CopyIcon);
+				if (y < mid)
+					return i;
+			}
 
-            foreach (var b in new[] { btnEdit, btnDel, btnDown, btnUp, btnCopy })
-            {
-                b.Width = 22;
-                b.Height = 20;
-                b.Dock = DockStyle.Right;
-            }
+			return list.Count;
+		}
 
-            row.Controls.Add(lbl);
-            row.Controls.Add(btnDown);
-            row.Controls.Add(btnUp);
-            row.Controls.Add(btnDel);
-            row.Controls.Add(btnCopy);
-            row.Controls.Add(btnEdit);
-            row.Height = lbl.Height + row.Padding.Top + row.Padding.Bottom;
-            return row;
-        }
+		void MoveEventInModel(int gi, int fromIndex, int toIndex)
+		{
+			var list = _project.EventGroups[gi].Events;
+			if (fromIndex < 0 || fromIndex >= list.Count) return;
+			if (toIndex < 0) toIndex = 0;
+			if (toIndex > list.Count) toIndex = list.Count;
+			if (fromIndex == toIndex || fromIndex + 1 == toIndex)
+			{
+				RefreshGroups();
+				return;
+			}
+			var ev = list[fromIndex];
+			list.RemoveAt(fromIndex);
+			if (toIndex > fromIndex) toIndex--;
+			if (toIndex > list.Count) toIndex = list.Count;
+			list.Insert(toIndex, ev);
+			RefreshGroups();
+		}
+		void ShowInsertLine(Control parent, int y)
+		{
+			if (_insertLine.Parent != parent)
+			{
+				_insertLine.Parent?.Controls.Remove(_insertLine);
+				parent.Controls.Add(_insertLine);
+				_insertLine.BringToFront();
+			}
+			
+			var children = parent.Controls.Cast<Control>()
+				.Where(c => c != _insertLine)
+				.ToList();
+			
+			children.Sort((a, b) => a.Top.CompareTo(b.Top));
 
-        static Button MakeHdrBtn(string text, Color bg, EventHandler handler, Image img = null)
+			int insertY;
+
+			if (children.Count == 0)
+			{
+				insertY = 2;
+			}
+			else
+			{
+				int idx = GetInsertIndexFromY(parent, y, null);
+				if (idx >= children.Count)
+					insertY = children[children.Count - 1].Bottom;
+				else
+					insertY = children[idx].Top;
+			}
+
+			_insertLine.SetBounds(0, insertY - 1, parent.Width, 2);
+			_insertLine.Visible = true;
+		}
+
+		void HideInsertLine()
+		{
+			_insertLine.Visible = false;
+		}
+		void MoveItemInModel(int gi, int ei, string key, int fromIndex, int toIndex)
+		{
+			List<ItemDefinition> list = key == "conditions"
+				? _project.EventGroups[gi].Events[ei].Conditions
+				: _project.EventGroups[gi].Events[ei].Actions;
+			if (fromIndex < 0 || fromIndex >= list.Count) return;
+			if (toIndex < 0) toIndex = 0;
+			if (toIndex > list.Count) toIndex = list.Count;
+			if (fromIndex == toIndex || fromIndex + 1 == toIndex)
+			{
+				RefreshGroups();
+				return;
+			}
+			var el = list[fromIndex];
+			list.RemoveAt(fromIndex);
+			if (toIndex > fromIndex) toIndex--;
+			if (toIndex > list.Count) toIndex = list.Count;
+			list.Insert(toIndex, el);
+			RefreshGroups();
+		}
+		Panel BuildItemRow(int gi, int ei, int j, ItemDefinition item, string key, Color bg, Color fg, Panel ih)
+		{
+			var row = new Panel
+			{
+				BackColor = bg,
+				Height = 22,
+				Dock = DockStyle.Top,
+				Padding = new Padding(2, 1, 2, 1),
+			};
+			
+			var itemHandle = new Panel
+			{
+				Width = 12,
+				Dock = DockStyle.Left,
+				Cursor = Cursors.SizeAll,
+				BackColor = Color.FromArgb(Math.Min(row.BackColor.R + 24, 255), Math.Min(row.BackColor.G + 24, 255), Math.Min(row.BackColor.B + 24, 255)),
+				Tag = "item-handle",
+				BorderStyle = BorderStyle.FixedSingle,
+			};
+			itemHandle.MouseDown += (s, e) =>
+			{
+				if (e.Button != MouseButtons.Left) return;
+				var data = $"item|{gi}|{ei}|{key}|{j}";
+				itemHandle.DoDragDrop(data, DragDropEffects.Move);
+			};
+			row.Controls.Add(itemHandle);
+
+			var sb = new System.Text.StringBuilder("[").Append(item.Category).Append("] ").Append(item.Action);
+			bool first = true;
+			foreach (var kvp in item.Params)
+			{
+				if (string.IsNullOrEmpty(kvp.Value)) continue;
+				sb.Append(first ? "  →  " : "  ").Append(kvp.Key).Append('=').Append(kvp.Value);
+				first = false;
+			}
+
+			var lbl = new Label
+			{
+				Text = sb.ToString(),
+				ForeColor = fg,
+				BackColor = bg,
+				Font = _fontCourier,
+				AutoSize = true,
+				Dock = DockStyle.Fill,
+				TextAlign = ContentAlignment.MiddleLeft,
+				Padding = new Padding(10, 0, 0, 0),
+			};
+			lbl.MaximumSize = new Size(((this.Width - split.Panel2.Width) / 3), 0);
+
+			var btnEdit = MakeHdrBtn("✎", Helpers.BtnBlue, (s, e) => EditItem(gi, ei, key, j), EditIcon);
+			var btnDel = MakeHdrBtn("✖", Helpers.BtnRed, (s, e) => DelItem(gi, ei, key, j), DeleteIcon);
+			//	var btnDown = MakeHdrBtn("▼", Helpers.BtnDarkGray, (s, e) => MoveItem(gi, ei, key, j, 1), DownIcon);
+			//	var btnUp = MakeHdrBtn("▲", Helpers.BtnDarkGray, (s, e) => MoveItem(gi, ei, key, j, -1), UpIcon);
+			var btnCopy = MakeHdrBtn("⧉", Helpers.BtnDarkBlue, (s, e) =>
+			{
+				_clipboard = new ItemDefinition
+				{
+					Category = item.Category,
+					Action = item.Action,
+					Params = new Dictionary<string, string>(item.Params)
+				};
+				_clipboardKind = key;
+			}, CopyIcon);
+
+			foreach (var b in new[] { btnEdit, btnDel, btnCopy })
+			{
+				b.Width = 22;
+				b.Height = 20;
+				b.Dock = DockStyle.Right;
+			}
+
+			row.Controls.Add(lbl);
+			//	row.Controls.Add(btnDown);
+			//	row.Controls.Add(btnUp);
+			row.Controls.Add(btnDel);
+			row.Controls.Add(btnCopy);
+			row.Controls.Add(btnEdit);
+			row.Height = lbl.Height + row.Padding.Top + row.Padding.Bottom;
+			return row;
+		}
+
+		static Button MakeHdrBtn(string text, Color bg, EventHandler handler, Image img = null)
         {
             var b = new Button
             {
@@ -1295,33 +1620,33 @@ namespace EventScriptIDE
         const string BinaryHeader = "ESPRJ";
         const int BinaryVersion = 1;
 
-        void OpenProject()
-        {
-            using (var dlg = new OpenFileDialog
-            {
-                DefaultExt = ".ESPRJ",
-                Filter = "ES Project|*.ESPRJ|ES IDE Project (legacy)|*.ESP|JSON|*.JSON|All files|*.*"
-            })
-            {
-                if (dlg.ShowDialog() != DialogResult.OK) return;
+		void OpenProject()
+		{
+			using (var dlg = new OpenFileDialog
+			{
+				DefaultExt = ".ESPRJ",
+				Filter = "ES Project|*.ESPRJ|ES VPE Project (legacy)|*.ESP|JSON|*.JSON|All files|*.*"
+			})
+			{
+				if (dlg.ShowDialog() != DialogResult.OK) return;
 
-                try
-                {
-                    var project = ReadProjectFromFile(dlg.FileName);
-                    if (project == null) throw new Exception("Invalid file");
+				try
+				{
+					var project = ReadProjectFromFile(dlg.FileName);
+					if (project == null) throw new Exception("Invalid file");
 
-                    EnsureDefaults(project);
+					EnsureDefaults(project);
 
-                    _project = project;
-                    _projectPath = dlg.FileName;
-                    Refresh2();
-                }
-                catch (Exception ex)
-                {
-                    CustomMessageBox.Show("Failed to open:\n" + ex.Message, "Error",MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
+					_project = project;
+					_projectPath = dlg.FileName;
+					Refresh2();
+				}
+				catch (Exception ex)
+				{
+					CustomMessageBox.Show("Failed to open:\n" + ex.Message, "Error",MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
+			}
+		}
 
         void SaveProject()
         {
@@ -1334,7 +1659,7 @@ namespace EventScriptIDE
             using (var dlg = new SaveFileDialog
             {
                 DefaultExt = ".ESPRJ",
-                Filter = "ES Project|*.ESPRJ|ES IDE Project (legacy)|*.ESP|JSON|*.JSON|All files|*.*"
+                Filter = "ES Project|*.ESPRJ|ES VPE Project (legacy)|*.ESP|JSON|*.JSON|All files|*.*"
             })
             {
                 if (dlg.ShowDialog() != DialogResult.OK) return;
@@ -1480,8 +1805,7 @@ namespace EventScriptIDE
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Could not write VB file:\n" + ex.Message, "Write Error",
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                CustomMessageBox.Show("Could not write VB file:\n" + ex.Message, "Write Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -1491,8 +1815,7 @@ namespace EventScriptIDE
 
             var icoFile = Path.Combine(appdatadir, "ico.ico");
             //Console.WriteLine(icoFile);
-            using (var dlg = new BuildProgressDialog(this, vbc, vbPath, exePath, pname,
-                                                      _project.ExtraDlls, _project.EmbeddedFiles, icoFile))
+            using (var dlg = new BuildProgressDialog(this, vbc, vbPath, exePath, pname, _project.ExtraDlls, _project.EmbeddedFiles, icoFile))
             {
                 Helpers.CenterOnOwner2(dlg, this);
                 dlg.ShowDialog(this);
@@ -1515,7 +1838,7 @@ namespace EventScriptIDE
         void ReloadExtensions()
         {
             ExtensionRegistry.Reload();
-            CustomMessageBox.Show("Reloaded : " + ExtensionRegistry.Metadata.Count + " extension(s) active.","Extensions", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            CustomMessageBox.Show("Reloaded : " + ExtensionRegistry.Metadata.Count + " extension(s) active.", "Extensions", MessageBoxButtons.OK, MessageBoxIcon.Information);
             Refresh2();
         }
 
@@ -1554,7 +1877,7 @@ namespace EventScriptIDE
             // IDE
             // 
             this.ClientSize = new System.Drawing.Size(292, 269);
-            this.Name = "IDE";
+            this.Name = "VPE";
             this.ResumeLayout(false);
 
         }
