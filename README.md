@@ -1,5 +1,5 @@
 # ES IDE
-please help me somehow delete `"ES_IDE\\bin\\Release\\Resource\\icon.ico"`
+please help me somehow delete the file called `"ES_IDE\\bin\\Release\\Resource\\icon.ico"` from the repo
 ---
 es ide is a ide that u make code like in GDevelop events system , but it generate to .NET code using VisualBasic
 
