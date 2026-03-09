@@ -1,22 +1,24 @@
 [
 	{
-		"SpecialType": "ExtensionData",
-		"Name": "UI++",
-		"Version": "0.0.3",
-		"Developer": "RO INC",
-		"Website": "https://ro-inc.xyz/"
-	},
+		"SpecialType":"ExtensionData",
+		"Name":"UI++",
+		"Version":"0.0.3",
+		"Developer":"RO INC",
+		"Website":"https://ro-inc.xyz/"
+	}
+	,
 	{
-		"Name": "Set image",
+		"Name":"Set image",
 		"Parameters": [
 			{
-				"Id": "imgpath",
-				"Type": "Str",
-				"Required": true
+				"Id":"imgpath",
+				"Type":"Str",
+				"Required": true,
+				"Label":"Path To image file"
 			},
 			{
-				"Id": "picturebox",
-				"Type": "Expr",
+				"Id":"picturebox",
+				"Type":"Expr",
 				"Required": false
 			}
 		],
@@ -24,12 +26,13 @@
 		"CustomSubs": ""
 	},
 	{
-		"Name": "Set embedded image",
+		"Name":"Set embedded image",
 		"Parameters": [
 			{
 				"Id": "imgpath",
 				"Type": "Str",
-				"Required": true
+				"Required": true,
+				"Label":"Filename of embedded image file"
 			},
 			{
 				"Id": "picturebox",
@@ -41,7 +44,7 @@
 		"CustomSubs": ""
 	},
 	{
-		"Name": "remove image",
+		"Name":"remove image",
 		"Parameters": [
 			{
 				"Id": "picturebox",
@@ -53,7 +56,7 @@
 		"CustomSubs": ""
 	},
 	{
-		"Name": "Set Image SizeMode",
+		"Name":"Set Image SizeMode",
 		"Parameters": [
 			{
 				"Id": "picturebox",
@@ -75,7 +78,7 @@
 		"CustomSubs": ""
 	},
 	{
-		"Name": "Set BackColor",
+		"Name":"Set BackColor",
 		"Parameters": [
 			{
 				"Id": "control",
@@ -92,7 +95,7 @@
 		"CustomSubs": ""
 	},
 	{
-		"Name": "Set ForeColor",
+		"Name":"Set ForeColor",
 		"Parameters": [
 			{
 				"Id": "control",
@@ -109,7 +112,7 @@
 		"CustomSubs": ""
 	},
 	{
-		"Name": "Set BackColor (RGB)",
+		"Name":"Set BackColor (RGB)",
 		"Parameters": [
 			{
 				"Id": "control",
@@ -119,24 +122,27 @@
 			{
 				"Id": "r",
 				"Type": "Expr",
-				"Required": true
+				"Required": true,
+				"Label":"R"
 			},
 			{
 				"Id": "g",
 				"Type": "Expr",
-				"Required": true
+				"Required": true,
+				"Label":"G"
 			},
 			{
 				"Id": "b",
 				"Type": "Expr",
-				"Required": true
+				"Required": true,
+				"Label":"B"
 			}
 		],
 		"Code": "%control%.BackColor=Color.FromArgb(%r%,%g%,%b%)",
 		"CustomSubs": ""
 	},
 	{
-		"Name": "Set ForeColor (RGB)",
+		"Name":"Set ForeColor (RGB)",
 		"Parameters": [
 			{
 				"Id": "control",
@@ -146,24 +152,27 @@
 			{
 				"Id": "r",
 				"Type": "Expr",
-				"Required": true
+				"Required": true,
+				"Label":"R"
 			},
 			{
 				"Id": "g",
 				"Type": "Expr",
-				"Required": true
+				"Required": true,
+				"Label":"G"
 			},
 			{
 				"Id": "b",
 				"Type": "Expr",
-				"Required": true
+				"Required": true,
+				"Label":"B"
 			}
 		],
 		"Code": "%control%.ForeColor=Color.FromArgb(%r%,%g%,%b%)",
 		"CustomSubs": ""
 	},
 	{
-		"Name": "Enable or Disable Control",
+		"Name":"Enable or Disable Control",
 		"Parameters": [
 			{
 				"Id": "control",
@@ -180,7 +189,7 @@
 		"CustomSubs": ""
 	},
 	{
-		"Name": "Set font",
+		"Name":"Set font",
 		"Parameters": [
 			{
 				"Id": "control",
@@ -217,7 +226,7 @@
 		"CustomSubs": ""
 	},
 	{
-		"Name": "set control Size",
+		"Name":"set control Size",
 		"Parameters": [
 			{
 				"Id": "control",
@@ -239,7 +248,7 @@
 		"CustomSubs": ""
 	},
 	{
-		"Name": "Set Control Location",
+		"Name":"Set Control Location",
 		"Parameters": [
 			{
 				"Id": "control",
@@ -261,7 +270,7 @@
 		"CustomSubs": ""
 	},
 	{
-		"Name": "Add Tooltip",
+		"Name":"Add Tooltip",
 		"Parameters": [
 			{
 				"Id": "control",
@@ -278,7 +287,7 @@
 		"CustomSubs": ""
 	},
 	{
-		"Name": "Cursor",
+		"Name":"Cursor",
 		"Parameters": [
 			{
 				"Id": "control",
@@ -302,7 +311,7 @@
 		"CustomSubs": ""
 	},
 	{
-		"Name": "Set Form Size (ClientSize)",
+		"Name":"Set Form Size (ClientSize)",
 		"Parameters": [
 			{
 				"Id": "width",
@@ -319,7 +328,7 @@
 		"CustomSubs": ""
 	},
 	{
-		"Name": "Set Form Title",
+		"Name":"Set Form Title",
 		"Parameters": [
 			{
 				"Id": "Text",
@@ -352,7 +361,8 @@
 			{
 				"Id":"savetovar",
 				"Type":"Expr",
-				"Required":true
+				"Required":true,
+				"Label":"Name of ResourceStream variable"
 			}
 		],
 		"Code":"'here is the event for getting embedded file of %filename% and saving it to s_%savetovar%",
@@ -369,11 +379,34 @@
 			{
 				"Id":"savetovar",
 				"Type":"Expr",
-				"Required":true
+				"Required":true,
+				"Label":"Name of Image variable"
 			}
 		],
 		"Code":"'here is the event for getting image from resourcestream of %ResourceStream% and saving it to i_%savetovar%",
 		"CustomSubs":"Dim i_%savetovar% As Image= Image.FromStream(s_%ResourceStream%)"
+	},
+	{
+		"Name":"Graphics Create Pen",
+		"Parameters":[
+			{
+				"Id":"PenName",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"Color",
+				"Type":"Expr",
+				"Required":true,
+				"Default":"Pens.Black"
+			},
+			{
+				"Id":"LineWidth",
+				"Type":"Expr",
+				"Required":true
+			}
+		],
+		"Code":"dim %PenName% as Pen=new Pen(%Color%,%LineWidth%)"
 	},
 	{
 		"Name":"Graphics DrawRectangle",
@@ -410,6 +443,43 @@
 			}
 		],
 		"Code":"%picturebox%_g.DrawRectangle(%Color%,%x%,%y%,%w%,%h%)"
+	},
+	{
+		"Name":"Graphics DrawLine",
+		"Parameters":[
+			{
+				"Id":"picturebox",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"Color",
+				"Type":"Expr",
+				"Required":true,
+				"Default":"Pens.Black"
+			},
+			{
+				"Id":"x1",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"y1",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"x2",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"y2",
+				"Type":"Expr",
+				"Required":true
+			}
+		],
+		"Code":"%picturebox%_g.DrawLine(%Color%,%x1%,%y1%,%x2%,%y2%)"
 	},
 	{
 		"Name":"Graphics DrawString",
@@ -572,5 +642,53 @@
 			}
 		],
 		"Code":"%ListBox%.Items.Add(%Item%)"
+	},
+	{
+		"Name":"ProgresBar set Max",
+		"Parameters":[
+			{
+				"Id":"ProgresBar",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"Max",
+				"Type":"Expr",
+				"Required":true
+			}
+		],
+		"Code":"%ProgresBar%.Max=%Max%"
+	},
+	{
+		"Name":"ProgresBar set Value",
+		"Parameters":[
+			{
+				"Id":"ProgresBar",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"Value",
+				"Type":"Expr",
+				"Required":true
+			}
+		],
+		"Code":"%ProgresBar%.Value=%Value%"
+	},
+	{
+		"Name":"Checkbox set Checked",
+		"Parameters":[
+			{
+				"Id":"Checkbox",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"Checked",
+				"Type":"Bool",
+				"Required":true
+			}
+		],
+		"Code":"%Checkbox%.Checked=%Checked%"
 	}
 ]
