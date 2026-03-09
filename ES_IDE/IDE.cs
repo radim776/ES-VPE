@@ -1247,7 +1247,7 @@ namespace EventScriptIDE
 
         void NewProject2()
         {
-            if (CustomMessageBox.Show("Discard current project and start fresh?", "New Project", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
+            //if (CustomMessageBox.Show("Discard current project and start fresh?", "New Project", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
             using (var dlg = new TemplateDialog())
             {
                 Helpers.CenterOnOwner2(dlg, this);
@@ -1265,6 +1265,20 @@ namespace EventScriptIDE
                             Refresh2();
                             break;
 
+                        case 2:
+                            //_project = new ProjectModel();
+                            try
+                            {
+                                _project = ReadProjectFromFile(Path.Combine(ResourcePath,"ExampleProjects","CustomRender.ESPRJ"));
+                            }
+                            catch(Exception e)
+                            {
+                                CustomMessageBox.Show("Can not load TempLate:"+e.Message, "Error When Loading TempLate", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                            _projectPath = null;
+                            Refresh2();
+                            break;
+
                         default:
                             CustomMessageBox.Show("Unknown TempLate ID:" + Result, "CRITICAL FATAIL FAILURE",MessageBoxButtons.OK,MessageBoxIcon.Error);
 
@@ -1273,7 +1287,7 @@ namespace EventScriptIDE
                 }
                 else
                 {
-                    CustomMessageBox.Show("cancelled", "debug");
+                    //CustomMessageBox.Show("cancelled", "debug");
                 }
             }
         }
