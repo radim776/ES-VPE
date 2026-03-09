@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // sadu atributů. Změnou hodnot těchto atributů se upraví informace
 // přidružené k sestavení.
 [assembly: AssemblyTitle("ES IDE")]
-[assembly: AssemblyDescription("Extremly gooS(good) IDE ,easy app code . Free . No code . Easy")]
+[assembly: AssemblyDescription("ES IDE is a easy to code ide , that you can make app in. app code is easy . Free . No code . Easy")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("RO INC")]
 [assembly: AssemblyProduct("ES IDE")]
