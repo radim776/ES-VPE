@@ -12,17 +12,20 @@
 			{
 				"Id": "menuStripItem",
 				"Type": "Expr",
-				"Required": true
+				"Required": true,
+				"Label":"Name of new MenuStripItem"
 			},
 			{
 				"Id": "Text",
 				"Type": "Str",
-				"Required": true
+				"Required": true,
+				"Label":"new MenuStripItem Text"
 			},
 			{
 				"Id": "menustrip",
 				"Type": "Expr",
-				"Required": true
+				"Required": true,
+				"Label":"Name of MenuStrip to add to"
 			}
 		],
 		"InitComponent": "Dim ms_%menuStripItem% As New ToolStripMenuItem(%Text%)\n%menustrip%.Items.Add(ms_%menuStripItem%)\nAddHandler ms_%menuStripItem%.Click, AddressOf ms_%menuStripItem%_Click",
@@ -55,7 +58,8 @@
 			{
 				"Id":"KeyEventArgs",
 				"Type":"Expr",
-				"Required":true
+				"Required":true,
+				"Label":"Var name (use .KeyCode for Code)"
 			}
 		],
 		"InitComponent":"AddHandler Me.KeyDown, AddressOf Form1_KeyDown",
@@ -68,7 +72,8 @@
 			{
 				"Id":"KeyEventArgs",
 				"Type":"Expr",
-				"Required":true
+				"Required":true,
+				"Label":"Var name (use .KeyCode for Code)"
 			}
 		],
 		"InitComponent":"AddHandler Me.KeyUp, AddressOf Form1_KeyUp",
@@ -81,7 +86,8 @@
 			{
 				"Id":"KeyPressEventArgs",
 				"Type":"Expr",
-				"Required":true
+				"Required":true,
+				"Label":"Var name (use .KeyChar for Character)"
 			}
 		],
 		"InitComponent":"AddHandler Me.KeyPress, AddressOf Form1_KeyPress",
