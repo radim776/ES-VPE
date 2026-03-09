@@ -2,7 +2,7 @@
 [Header]
 ProjectFileVersion = 1.1
 [General]
-Program name = ES IDE
+Program name = ES VPE
 Program version = 0.0.4.0
 Windows XP = 1
 Windows Server 2003 = 1
@@ -789,7 +789,7 @@ ESIDE.Project\shell\open\command
 [Variables]
 [SCs]
 Desktop
-ES IDE
+ES VPE
 <InstallPath>\ES_IDE.EXE
 
 
