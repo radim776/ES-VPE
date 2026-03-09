@@ -1,5 +1,7 @@
-# ES IDE
-es ide is a ide that u make code like in GDevelop events system , but it generate to .NET code using VisualBasic
+# ES VPE
+es VPE is a VPE that u make code like in GDevelop events system , but it generate to .NET code using VisualBasic
+
+( VPE = Visual Programming Enviroment )
 
 # DOWNLOAD
 https://github.com/radim776/ES-IDE/releases/tag/Release
