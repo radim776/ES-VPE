@@ -13,13 +13,13 @@ namespace EventScriptIDE.Dialogs
         {
             _settings = settings;
 
-            Text = "IDE Settings";
+            Text = "VPE SETTINGS";
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
             Size = new Size(560, 210);
             StartPosition = FormStartPosition.Manual;
-            Font = new Font("Segoe UI", 9f);
+            Font = new Font("Arial", 9f);
             BackColor = IDE.IDETheme.Back;
             ForeColor = IDE.IDETheme.Fore;
 
@@ -77,9 +77,9 @@ namespace EventScriptIDE.Dialogs
             frm.Controls.Add(_vdo);
             Controls.Add(frm);
 
-            var btnPanel = new Panel { Dock = DockStyle.Bottom, Height = 38, Padding = new Padding(6, 4, 6, 4) };
-            var btnSave  = Helpers.MakeBtn("SAVE",   Helpers.BtnGreen, Color.White, (s, e) => DoSave(), 80);
-            var btnCx    = Helpers.MakeBtn("CANCEL", Color.DimGray,    Color.White, (s, e) => Close(),  80);
+			var btnPanel = new Panel { Dock = DockStyle.Bottom, Height = 38, Padding = new Padding(6, 4, 6, 4) };
+			var btnSave = Helpers.MakeBtn("SAVE", Helpers.BtnGreen, Color.White, (s, e) => DoSave(), 80);
+			var btnCx = Helpers.MakeBtn("CANCEL", Color.DimGray, Color.White, (s, e) => Close(), 80);
             btnSave.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
             btnCx.Anchor   = AnchorStyles.Right | AnchorStyles.Bottom;
             btnSave.Top    = btnCx.Top = 6;
