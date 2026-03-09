@@ -1,6 +1,6 @@
 # ES VPE
 ES VPE is a  Visual programming enviroment where you can use triggers, conditions and events to make code<br>
-it compes to a EXE file using VisualBasic.NET and VBC.exe compiler<br>
+it compiles to a EXE file using VisualBasic.NET and VBC.exe compiler<br>
 it allows you to make EXE files in small file size very easily, without any coding<br>
 it has extension support for easy to increase capability
 
