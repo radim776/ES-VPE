@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // Obecné informace o sestavení se řídí přes následující 
 // sadu atributů. Změnou hodnot těchto atributů se upraví informace
 // přidružené k sestavení.
-[assembly: AssemblyTitle("ES IDE")]
-[assembly: AssemblyDescription("ES IDE is a easy to code ide , that you can make app in. app code is easy . Free . No code . Easy")]
+[assembly: AssemblyTitle("ES VPE")]
+[assembly: AssemblyDescription("ES VPE is a easy to code VPE , that you can make app in. app code is easy . Free . No code . Easy")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("RO INC")]
-[assembly: AssemblyProduct("ES IDE")]
+[assembly: AssemblyProduct("ES VPE")]
 [assembly: AssemblyCopyright("Copyright © RO INC 2025")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
