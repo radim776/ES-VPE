@@ -18,7 +18,13 @@ namespace EventScriptIDE
             //Application.Run(new IDE(args));
             using (SplashForm splash = new SplashForm())
             {
-                splash.Show();
+				if (args.Length > 0)
+				{
+					splash.label1.Text = "Loading Project";
+				}
+
+
+				splash.Show();
                 Application.DoEvents();
                 Thread.Sleep(1000);
             }
