@@ -1,4 +1,4 @@
-namespace EventScriptIDE.Dialogs
+﻿namespace EventScriptIDE.Dialogs
 {
     partial class TemplateDialog
     {
