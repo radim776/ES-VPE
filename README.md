@@ -1,5 +1,7 @@
 # ES VPE
-es VPE is a VPE that u make code like in GDevelop events system , but it generate to .NET code using VisualBasic
+ES VPE is a  Visual programming enviroment where u use triggers , conditions and events to make code
+it is compile to Visual Basic.NET
+allow u to make EXE files in small file size very easily , has extension support for easy to increase capability
 
 ( VPE = Visual Programming Enviroment )
 
