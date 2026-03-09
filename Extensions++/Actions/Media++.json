@@ -1,0 +1,112 @@
+[
+{
+		"SpecialType": "ExtensionData",
+		"Name": "Media++",
+		"Version": "0.0.1",
+		"Developer": "RO INC",
+		"Website": "https://ro-inc.xyz/"
+	},
+	{
+		"Name":"New SoundPlayer",
+		"Parameters":[
+			{
+				"Id":"VarName",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"Path",
+				"Type":"Str",
+				"Required":true,
+				"Label":"File name of embedded WAV file"
+			}
+		],
+		"Code":"'",
+		"CustomSubs":"Dim _Mpp_%VarName% as new System.Media.SoundPlayer(%Path%)"
+	},
+	{
+		"Name":"New SoundPlayer with embedded file",
+		"Parameters":[
+			{
+				"Id":"VarName",
+				"Type":"Expr",
+				"Required":true
+			},
+			{
+				"Id":"Path",
+				"Type":"Str",
+				"Required":true,
+				"Label":"Path to WAV file"
+			}
+		],
+		"Code":"'",
+		"CustomSubs":"Dim _Mpp_%VarName% as new System.Media.SoundPlayer(Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(%Path%))"
+	},
+	{
+		"Name":"SoundPlayer load",
+		"Parameters":[
+			{
+				"Id":"VarName",
+				"Type":"Expr",
+				"Required":true
+			}
+		],
+		"Code":"_Mpp_%VarName%.Load()"
+	},
+
+	{
+		"Name":"SoundPlayer loadasync",
+		"Parameters":[
+			{
+				"Id":"VarName",
+				"Type":"Expr",
+				"Required":true
+			}
+		],
+		"Code":"_Mpp_%VarName%.LoadAsync()"
+	},
+	{
+		"Name":"SoundPlayer play",
+		"Parameters":[
+			{
+				"Id":"VarName",
+				"Type":"Expr",
+				"Required":true
+			}
+		],
+		"Code":"_Mpp_%VarName%.Play()"
+	},
+	{
+		"Name":"SoundPlayer playsync",
+		"Parameters":[
+			{
+				"Id":"VarName",
+				"Type":"Expr",
+				"Required":true
+			}
+		],
+		"Code":"_Mpp_%VarName%.PlaySync()"
+	},
+	{
+		"Name":"SoundPlayer playLooping",
+		"Parameters":[
+			{
+				"Id":"VarName",
+				"Type":"Expr",
+				"Required":true
+			}
+		],
+		"Code":"_Mpp_%VarName%.PlayLooping()"
+	},
+	{
+		"Name":"SoundPlayer stop",
+		"Parameters":[
+			{
+				"Id":"VarName",
+				"Type":"Expr",
+				"Required":true
+			}
+		],
+		"Code":"_Mpp_%VarName%.Stop()"
+	}
+]
