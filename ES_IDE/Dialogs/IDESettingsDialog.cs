@@ -9,7 +9,7 @@ namespace EventScriptIDE.Dialogs
         private readonly TextBox     _btPath;
         private readonly CheckBox    _vdo;
 
-        public IDESettingsDialog(Form parent, AppSettings settings)
+        public IDESettingsDialog(IDE parent, AppSettings settings)
         {
             _settings = settings;
 
@@ -77,13 +77,24 @@ namespace EventScriptIDE.Dialogs
             frm.Controls.Add(_vdo);
             Controls.Add(frm);
 
+			var CuztomizeButton = Helpers.MakeBtn("CUZTOMIZE", Helpers.BtnPurple, IDE.IDETheme.Fore, (s, e) =>
+			{
+				using (var dlg = new CuztomizeDialog(parent,_settings))
+				{
+					Helpers.CenterOnOwner2(dlg, this);
+					dlg.ShowDialog();
+				}
+			},0,24);
+			CuztomizeButton.Anchor = AnchorStyles.Left | AnchorStyles.Bottom;
+			
+
 			var btnPanel = new Panel { Dock = DockStyle.Bottom, Height = 38, Padding = new Padding(6, 4, 6, 4) };
 			var btnSave = Helpers.MakeBtn("SAVE", Helpers.BtnGreen, Color.White, (s, e) => DoSave(), 80);
 			var btnCx = Helpers.MakeBtn("CANCEL", Color.DimGray, Color.White, (s, e) => Close(), 80);
-            btnSave.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
-            btnCx.Anchor   = AnchorStyles.Right | AnchorStyles.Bottom;
-            btnSave.Top    = btnCx.Top = 6;
-            btnPanel.Controls.AddRange(new Control[] { btnSave, btnCx });
+			btnSave.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
+			btnCx.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
+			btnSave.Top = btnCx.Top = 6;
+            btnPanel.Controls.AddRange(new Control[] { CuztomizeButton,btnSave, btnCx });
             btnPanel.Resize += (s, e) =>
             {
                 btnSave.Left = btnPanel.Width - 172;
