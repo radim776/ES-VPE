@@ -15,14 +15,14 @@ namespace EventScriptIDE
 {
     public class IDE : Form
     {
-        // ── State ─────────────────────────────────────────────────────────────
+        // State
         ProjectModel _project = new ProjectModel();
         string _projectPath = null;
         AppSettings _settings;
 
-        // ── Controls ──────────────────────────────────────────────────────────
+        // Controls
         Label _infoLabel;
-        Panel _groupsPanel;          // auto-scroll panel holding dynamic group cards
+        Panel _groupsPanel;
         ListBox _varList;
         ListBox _ctrlList;
 		Panel _insertLine;
@@ -35,17 +35,30 @@ namespace EventScriptIDE
             public static Color CanvasBack = Helpers.FormBg;
             public static Color ListBack = Color.FromArgb(255,255,255);
             public static Color HeaderFore = Color.FromArgb(0,0,0);*/
-            public static Color Back = Color.FromArgb(30, 30, 30);
+
+			/*
+			 * 
+			public static Color Back = Color.FromArgb(30, 30, 30);
             public static Color Fore = Color.FromArgb(220, 220, 220);
             public static Color CanvasBack = Color.FromArgb(37, 37, 38);
             public static Color ListBack = Color.FromArgb(45, 45, 48);
 			public static Color ListBack2 = Color.FromArgb(60, 60, 64);
 			public static Color CanvasBack2 = Color.FromArgb(48, 48, 64);
 			public static Color HeaderFore = Color.FromArgb(240, 240, 240);
+			 * 
+			 * 
+			 * */
+			public static Color Back = Color.FromArgb(20,20,20);
+            public static Color Fore = Color.FromArgb(220, 220, 220);
+            public static Color CanvasBack = Color.FromArgb(30, 30, 30);
+            public static Color ListBack = Color.FromArgb(35, 35, 38);
+			public static Color ListBack2 = Color.FromArgb(60, 60, 64);
+			public static Color CanvasBack2 = Color.FromArgb(48, 48, 64);
+			public static Color HeaderFore = Color.FromArgb(240, 240, 240);
             public static Color Accent = ColorTranslator.FromHtml("#5900ff");
             public static Color AccentDark = ColorTranslator.FromHtml("#2d0080");
         }
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
         public IDE(string[] args)
         {
             _settings = SettingsManager.Load();
@@ -67,7 +80,9 @@ namespace EventScriptIDE
             this.BackColor = IDETheme.Back;
             this.ForeColor = IDETheme.Fore;
 
-            BuildUI();
+			LoadFonts();
+
+			BuildUI();
             BuildMenu();
             //Controls.SetChildIndex(MainMenuStrip, 0);
             Refresh2();
@@ -88,9 +103,9 @@ namespace EventScriptIDE
             }
         }
 
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
         // UI Construction
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
         Image AddIcon = Image.FromFile(Path.Combine(ResourcePath,"Add.png"));
         Image SaveIcon = Image.FromFile(Path.Combine(ResourcePath, "Save.png"));
         Image OpenIcon = Image.FromFile(Path.Combine(ResourcePath, "Open.png"));
@@ -170,7 +185,7 @@ namespace EventScriptIDE
             var file = new ToolStripMenuItem("FILE");
             file.DropDownItems.Add(MItem("New Project",AddIcon, Keys.Control | Keys.N, (s, e) => NewProject2()));
             file.DropDownItems.Add(MItem("Open Project…",OpenIcon, Keys.Control | Keys.O, (s, e) => OpenProject()));
-            file.DropDownItems.Add(MItem("Save Project",SaveIcon, Keys.Control | Keys.S, (s, e) => SaveProject()));
+            file.DropDownItems.Add(MItem("Save Project",SaveIcon, Keys.Control | Keys.S, (s, e) => SaveProject(true)));
             file.DropDownItems.Add(MItem("Save Project As…",SaveIcon, Keys.None, (s, e) => SaveProjectAs()));
             file.DropDownItems.Add(new ToolStripSeparator());
             file.DropDownItems.Add(MItem("VPE Settings", SettingsIcon, Keys.None, (s, e) => OpenIdeSettings()));
@@ -208,6 +223,10 @@ namespace EventScriptIDE
             {
                 Alignment = ToolStripItemAlignment.Right
             };
+			ver.Click += (e, s) =>
+			{
+				OpenAboutScreen();
+			};
 
             file.Font = MenusFont;
             proj.Font = MenusFont;
@@ -549,9 +568,9 @@ namespace EventScriptIDE
             //parent.Controls.Add(spacer2);
         }
 
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
         // Refresh
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
 
         void Refresh2()
         {
@@ -609,14 +628,43 @@ namespace EventScriptIDE
             
             _groupsPanel.AutoScrollPosition = new Point(-scrollPos.X, -scrollPos.Y);
         }
+		public Font[] DecodeFonts(string data)
+		{
+			var parts = data.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries); 
+			var fonts = new Font[parts.Length];
 
-        // ═════════════════════════════════════════════════════════════════════
-        // Dynamic Card Builders
-        // ═════════════════════════════════════════════════════════════════════
-        private static ItemDefinition _clipboard = null;
+			for (int i = 0; i < parts.Length; i++)
+			{
+				var fontParts = parts[i].Split(',');
+
+				string name = fontParts[0];
+				FontStyle style = (FontStyle)Enum.Parse(typeof(FontStyle), fontParts[1]);
+				float size = float.Parse(fontParts[2]);
+
+				fonts[i] = new Font(name, size, style);
+			}
+
+			return fonts;
+		}
+		void LoadFonts()
+		{
+			var Fonts = DecodeFonts(_settings.Fonts1);
+			MonoFont = Fonts[0].FontFamily.Name;
+			var VerdanaFont = Fonts[2].FontFamily.Name;
+			_fontCb10 = new Font(MonoFont, 10f, FontStyle.Bold);
+			_fontSegoeSmBold = Fonts[0];
+			_fontSegoeTinyBold = Fonts[2];
+			_fontSegoeBigBold = new Font(VerdanaFont, 12f, FontStyle.Bold);
+			_fontSegoeBigRg = new Font(VerdanaFont, 12f, FontStyle.Regular);
+			_fontCourier = Fonts[1];
+		}
+		// ---------------------------------------------------------------------
+		// Dynamic Card Builders
+		// ---------------------------------------------------------------------
+		private static ItemDefinition _clipboard = null;
         private static string _clipboardKind = null;
-		static readonly string MonoFont = "Courier New";
-		static readonly Font _fontCb10 = new Font(MonoFont, 10f, FontStyle.Bold);
+		public static string MonoFont = "Courier New";
+		static Font _fontCb10 = new Font(MonoFont, 10f, FontStyle.Bold);
 		Image DeleteIcon = Image.FromFile(Path.Combine(ResourcePath,"Delete.png"));
         Image UpIcon = Image.FromFile(Path.Combine(ResourcePath,"Up.png"));
         Image DownIcon = Image.FromFile(Path.Combine(ResourcePath,"Down.png"));
@@ -780,10 +828,10 @@ namespace EventScriptIDE
             outer.Controls.Add(hdr);
             return outer;
         }
-        static readonly Font _fontSegoeSmBold = new Font(MonoFont, 11f, FontStyle.Bold);
-        static readonly Font _fontSegoeTinyBold = new Font("Verdana", 8f, FontStyle.Bold);
-        static readonly Font _fontSegoeBigBold = new Font("Verdana", 12f, FontStyle.Bold);
-        static readonly Font _fontSegoeBigRg = new Font("Verdana", 12f, FontStyle.Regular);
+        static Font _fontSegoeSmBold = new Font(MonoFont, 11f, FontStyle.Bold);
+        public static Font _fontSegoeTinyBold = new Font("Verdana", 8f, FontStyle.Bold);
+        static Font _fontSegoeBigBold = new Font("Verdana", 12f, FontStyle.Bold);
+        static Font _fontSegoeBigRg = new Font("Verdana", 12f, FontStyle.Regular);
 		public Font _fontCourier = new Font(MonoFont, 8f);
 
 		Panel BuildEventCard(int gi, int ei, EventModel ev)
@@ -1283,9 +1331,9 @@ namespace EventScriptIDE
             return b;
         }
 
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
         // Event Group Operations
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
 
         void AddEventGroup()
         {
@@ -1339,9 +1387,9 @@ namespace EventScriptIDE
             RefreshGroups();
         }
 
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
         // Event Operations
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
 
         void AddEvent(int gi)
         {
@@ -1376,9 +1424,9 @@ namespace EventScriptIDE
             RefreshGroups();
         }
 
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
         // Condition / Action Operations
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
 
         void AddCondition(int gi, int ei)
         {
@@ -1443,9 +1491,9 @@ namespace EventScriptIDE
             RefreshGroups();
         }
 
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
         // Variable Operations
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
 
         void AddVariable()
         {
@@ -1481,9 +1529,9 @@ namespace EventScriptIDE
             RefreshVarList(); UpdateInfo();
         }
 
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
         // Control Operations
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
 
         void AddControl()
         {
@@ -1534,9 +1582,9 @@ namespace EventScriptIDE
             }
         }
 
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
         // Project Settings
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
 
         void ProjectSettings()
         {
@@ -1558,9 +1606,9 @@ namespace EventScriptIDE
             Refresh2();
         }
 
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
         // File I/O
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
 
         void NewProject()
         {
@@ -1648,9 +1696,9 @@ namespace EventScriptIDE
 			}
 		}
 
-        void SaveProject()
+        public void SaveProject(bool ShowPopup)
         {
-            if (_projectPath != null) WriteProject(_projectPath);
+            if (_projectPath != null) WriteProject(_projectPath,ShowPopup);
             else SaveProjectAs();
         }
 
@@ -1664,11 +1712,11 @@ namespace EventScriptIDE
             {
                 if (dlg.ShowDialog() != DialogResult.OK) return;
                 _projectPath = dlg.FileName;
-                WriteProject(_projectPath);
+                WriteProject(_projectPath,true);
             }
         }
 
-        void WriteProject(string path)
+        void WriteProject(string path, bool ShowPopup)
         {
             try
             {
@@ -1684,7 +1732,10 @@ namespace EventScriptIDE
                 }
 
                 UpdateInfo();
-                CustomMessageBox.Show("Saved :\n" + path, "Saved",MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if(ShowPopup)
+				{
+					CustomMessageBox.Show("Saved :\n" + path, "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				}
             }
             catch (Exception ex)
             {
@@ -1775,9 +1826,9 @@ namespace EventScriptIDE
             if (data.EventGroups == null) data.EventGroups = new List<EventGroup>();
         }
 
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
         // Code Generation / Build
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
 
         void GenerateCode()
         {
@@ -1822,9 +1873,9 @@ namespace EventScriptIDE
             }
         }
 
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
         // Extensions
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
 
         void OpenExtBrowser()
         {
@@ -1857,9 +1908,9 @@ namespace EventScriptIDE
             }
         }
 
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
         // IDE Settings
-        // ═════════════════════════════════════════════════════════════════════
+        // ---------------------------------------------------------------------
 
         void OpenIdeSettings()
         {
