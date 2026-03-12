@@ -311,6 +311,20 @@
 		"CustomSubs": ""
 	},
 	{
+		"Name":"hide Cursor",
+		"Parameters": [
+			],
+		"Code": "Cursor.Hide()",
+		"CustomSubs": ""
+	},
+	{
+		"Name":"show Cursor",
+		"Parameters": [
+			],
+		"Code": "Cursor.Show()",
+		"CustomSubs": ""
+	},
+	{
 		"Name":"Set Form Size (ClientSize)",
 		"Parameters": [
 			{
