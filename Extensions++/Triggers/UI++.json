@@ -1,0 +1,137 @@
+[
+	{
+		"SpecialType": "ExtensionData",
+		"Name": "UI++",
+		"Version": "0.0.3",
+		"Developer": "RO INC",
+		"Website": "https://ro-inc.xyz/"
+	},
+	{
+		"Name": "menu strip item clicked",
+		"Parameters": [
+			{
+				"Id": "menuStripItem",
+				"Type": "Expr",
+				"Required": true,
+				"Label":"Name of new MenuStripItem"
+			},
+			{
+				"Id": "Text",
+				"Type": "Str",
+				"Required": true,
+				"Label":"new MenuStripItem Text"
+			},
+			{
+				"Id": "menustrip",
+				"Type": "Expr",
+				"Required": true,
+				"Label":"Name of MenuStrip to add to"
+			}
+		],
+		"InitComponent": "Dim ms_%menuStripItem% As New ToolStripMenuItem(%Text%)\n%menustrip%.Items.Add(ms_%menuStripItem%)\nAddHandler ms_%menuStripItem%.Click, AddressOf ms_%menuStripItem%_Click",
+		"Subname": "ms_%menuStripItem%_Click",
+		"Subparams": "sender As Object, e As EventArgs"
+	},
+	{
+		"Name": "Form Resized",
+		"Parameters": [],
+		"InitComponent": "AddHandler Me.Resize, AddressOf Form1_Resize",
+		"Subname": "Form1_Resize",
+		"Subparams": "sender As Object, e As EventArgs"
+	},
+	{
+		"Name":"PictureBox painted",
+		"Parameters":[
+			{
+				"Id":"picturebox",
+				"Type":"Expr",
+				"Required":true
+			}
+		],
+		"InitComponent":"AddHandler %picturebox%.Paint, AddressOf %picturebox%_Paint",
+		"Subname":"%picturebox%_Paint",
+		"Subparams":"sender As Object, e As PaintEventArgs)\nDim %picturebox%_g As Graphics\n%picturebox%_g=e.Graphics'"
+	},
+	{
+		"Name":"attach Key Down",
+		"Parameters":[
+			{
+				"Id":"KeyEventArgs",
+				"Type":"Expr",
+				"Required":true,
+				"Label":"Var name (use .KeyCode for Code)"
+			}
+		],
+		"InitComponent":"AddHandler Me.KeyDown, AddressOf Form1_KeyDown",
+		"Subname":"Form1_KeyDown",
+		"Subparams":"sender As Object,%KeyEventArgs% As KeyEventArgs"
+	},
+	{
+		"Name":"attach Key Up",
+		"Parameters":[
+			{
+				"Id":"KeyEventArgs",
+				"Type":"Expr",
+				"Required":true,
+				"Label":"Var name (use .KeyCode for Code)"
+			}
+		],
+		"InitComponent":"AddHandler Me.KeyUp, AddressOf Form1_KeyUp",
+		"Subname":"Form1_KeyUp",
+		"Subparams":"sender As Object,%KeyEventArgs% As KeyEventArgs"
+	},
+	{
+		"Name":"attach Key Press",
+		"Parameters":[
+			{
+				"Id":"KeyPressEventArgs",
+				"Type":"Expr",
+				"Required":true,
+				"Label":"Var name (use .KeyChar for Character)"
+			}
+		],
+		"InitComponent":"AddHandler Me.KeyPress, AddressOf Form1_KeyPress",
+		"Subname":"Form1_KeyPress",
+		"Subparams":"sender As Object,%KeyPressEventArgs% As KeyPressEventArgs"
+	},
+	{
+		"Name":"control hover start",
+		"Parameters":[
+			{
+				"Id":"control",
+				"Type":"Expr",
+				"Required":true
+			}
+		],
+		"InitComponent":"AddHandler %control%.MouseEnter, AddressOf %control%_MouseEnter",
+		"Subname":"%control%_MouseEnter",
+		"Subparams":"sender As Object,e As EventArgs"
+	},
+	{
+		"Name":"control hover end",
+		"Parameters":[
+			{
+				"Id":"control",
+				"Type":"Expr",
+				"Required":true
+			}
+		],
+		"InitComponent":"AddHandler %control%.MouseLeave, AddressOf %control%_MouseLeave",
+		"Subname":"%control%_MouseLeave",
+		"Subparams":"sender As Object,e As EventArgs"
+	}
+	,
+	{
+		"Name":"control mouse move",
+		"Parameters":[
+			{
+				"Id":"control",
+				"Type":"Expr",
+				"Required":true
+			}
+		],
+		"InitComponent":"AddHandler %control%.MouseMove, AddressOf %control%_MouseMove",
+		"Subname":"%control%_MouseMove",
+		"Subparams":"sender As Object,e As MouseEventArgs)\nDim Y  as Integer=e.Y\nDim X as Integer=e.X'"
+	}
+]
