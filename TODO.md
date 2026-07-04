@@ -1,3 +1,4 @@
+TODO LIST 
 - [ ] add color customization
 - [ ] make all dark mode
 - [ ] modernize all dialogs
