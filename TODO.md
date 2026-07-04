@@ -4,3 +4,5 @@ TODO LIST
 - [ ] modernize all dialogs
 - [ ] add automatic installing VBC
 - [ ] optimize the UI for less lag
+- [ ] add undo
+- [ ] add redo
