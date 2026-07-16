@@ -17,7 +17,7 @@ jobs:
         uses: microsoft/setup-msbuild@v2
 
       - name: Restore NuGet packages
-        run: nuget restore ES_IDE/ES_IDE.sln
+        run: nuget restore ES_IDE.sln
 
       - name: Build
-        run: msbuild ES_IDE/ES_IDE.sln /p:Configuration=Release /p:Platform="Any CPU"
+        run: msbuild ES_IDE.sln /p:Configuration=Release /p:Platform="Any CPU"
