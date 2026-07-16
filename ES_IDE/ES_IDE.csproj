@@ -106,6 +106,12 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Dialogs\CustomMessageBox.cs" />
+    <Compile Include="Dialogs\CuztomizeDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\CuztomizeDialog.Designer.cs">
+      <DependentUpon>CuztomizeDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ExtensionBrowserDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -145,6 +151,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Models.cs" />
+    <Compile Include="OScheck.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -163,6 +170,9 @@
     <EmbeddedResource Include="Dialogs\AboutBox1.resx">
       <DependentUpon>AboutBox1.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\CuztomizeDialog.resx">
+      <DependentUpon>CuztomizeDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\SplashForm.resx">
       <DependentUpon>SplashForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -174,13 +184,19 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
-    <None Include="Resources\Wizard_1 - kopie.bmp" />
+    <Content Include="Resources\BlankProject.PNG" />
+    <None Include="Resources\No.png" />
+    <None Include="Resources\Ok.png" />
     <None Include="Resources\Splash.png" />
+    <None Include="Resources\CustomRender.PNG" />
+    <None Include="Resources\Empty1.PNG" />
+    <None Include="Resources\Wizard_1 - kopie.bmp" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
