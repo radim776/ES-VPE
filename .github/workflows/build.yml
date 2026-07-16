@@ -21,3 +21,9 @@ jobs:
 
       - name: Build
         run: msbuild ES_IDE.sln /p:Configuration=Release /p:Platform="Any CPU"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ES_IDE-Release
+          path: ES_IDE/bin/Release/
