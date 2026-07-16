@@ -23,4 +23,4 @@ Press RUN button<br>
 Done!
 
 # BADGES
-![build passing](https://img.shields.io/badge/build-passing-brightgreen?style=for-the-badge)
+![Build](https://github.com/radim776/ES-VPE/actions/workflows/build.yml/badge.svg)
