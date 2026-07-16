@@ -6,6 +6,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using EventScriptIDE.Dialogs;
@@ -26,6 +27,17 @@ namespace EventScriptIDE
         ListBox _varList;
         ListBox _ctrlList;
 		Panel _insertLine;
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto)]
+		public static extern int MessageBox(IntPtr hWnd, string text, string caption, uint type);
+
+		private const uint MB_OK = 0x00000000;
+		private const uint MB_OKCANCEL = 0x00000001;
+		private const uint MB_YESNO = 0x00000004;
+		private const uint MB_ICONERROR = 0x00000010;
+		private const uint MB_ICONQUESTION = 0x00000020;
+		private const uint MB_ICONWARNING = 0x00000030;
+		private const uint MB_ICONINFORMATION = 0x00000040;
 
 		public static string ResourcePath = Path.Combine(Application.StartupPath, "Resource");
         public static class IDETheme
@@ -347,7 +359,6 @@ namespace EventScriptIDE
 
         private void OpenAboutScreen()
         {
-            //throw new NotImplementedException();
             using (var dlg = new AboutBox1())
             {
                 Helpers.CenterOnOwner2(dlg, this);
@@ -408,8 +419,7 @@ namespace EventScriptIDE
             };
 
             Controls.Add(topBar);
-
-            // Split container (left groups | right sidebar)
+			
             split = new SplitContainer
             {
                 Dock = DockStyle.Fill,
@@ -423,8 +433,7 @@ namespace EventScriptIDE
                 split.Panel2MinSize = 220;
                 split.SplitterDistance = Math.Max(200, split.Width - 280);
             };
-
-            // Left panel
+			
             var leftTop = new Panel { Dock = DockStyle.Top, Height = 30, Padding = new Padding(4, 2, 4, 0) };
             leftTop.Controls.Add(new Label
             {
@@ -460,8 +469,7 @@ namespace EventScriptIDE
             leftWrapper.Controls.Add(leftTop);
 
             split.Panel1.Controls.Add(leftWrapper);
-
-            // Right sidebar
+			
             BuildSidebar(split.Panel2);
 
             Controls.Add(split);
@@ -616,17 +624,30 @@ namespace EventScriptIDE
 
         void RefreshGroups()
         {
-            var scrollPos = _groupsPanel.AutoScrollPosition;
+            try
+			{
+				var scrollPos = _groupsPanel.AutoScrollPosition;
 
-            _groupsPanel.SuspendLayout();
-            _groupsPanel.Controls.Clear();
-            
-            for (int gi = _project.EventGroups.Count - 1; gi >= 0; gi--)
-                _groupsPanel.Controls.Add(BuildGroupCard(gi, _project.EventGroups[gi]));
+				_groupsPanel.SuspendLayout();
+				foreach (Control c in _groupsPanel.Controls)
+				{
+					c.Dispose();
+				}
+				_groupsPanel.Controls.Clear();
 
-            _groupsPanel.ResumeLayout();
-            
-            _groupsPanel.AutoScrollPosition = new Point(-scrollPos.X, -scrollPos.Y);
+				for (int gi = _project.EventGroups.Count - 1; gi >= 0; gi--)
+					_groupsPanel.Controls.Add(BuildGroupCard(gi, _project.EventGroups[gi]));
+
+				_groupsPanel.ResumeLayout();
+
+				_groupsPanel.AutoScrollPosition = new Point(-scrollPos.X, -scrollPos.Y);
+			}
+			catch(Exception e)
+			{
+				Console.WriteLine("Failed to render  groups");
+				Console.WriteLine(e.ToString());
+				MessageBox(IntPtr.Zero, "error", "error", MB_OK | MB_ICONERROR);
+			}
         }
 		public Font[] DecodeFonts(string data)
 		{
@@ -638,8 +659,8 @@ namespace EventScriptIDE
 				var fontParts = parts[i].Split(',');
 
 				string name = fontParts[0];
-				FontStyle style = (FontStyle)Enum.Parse(typeof(FontStyle), fontParts[1]);
-				float size = float.Parse(fontParts[2]);
+				FontStyle style = (FontStyle)Enum.Parse(typeof(FontStyle), fontParts[1].Replace(".",","));
+				float size = float.Parse(fontParts[2], System.Globalization.CultureInfo.InvariantCulture);
 
 				fonts[i] = new Font(name, size, style);
 			}
@@ -671,6 +692,7 @@ namespace EventScriptIDE
         Image RenameIcon = Image.FromFile(Path.Combine(ResourcePath,"Rename.png"));
         Image EditIcon = Image.FromFile(Path.Combine(ResourcePath,"Edit.png"));
         Image CopyIcon = Image.FromFile(Path.Combine(ResourcePath,"Copy.png"));
+
         Panel BuildGroupCard(int gi, EventGroup group)
         {
             var outer = new Panel
@@ -751,8 +773,8 @@ namespace EventScriptIDE
 				Padding = new Padding(4, 2, 4, 0),
                 AutoSize = true,
                 AutoSizeMode = AutoSizeMode.GrowAndShrink,
-				AllowDrop = true,          // allow dropping even if empty
-				MinimumSize = new Size(0, 30) // visible drop area
+				AllowDrop = true,
+				MinimumSize = new Size(0, 30)
 			};
 
 			inner.DragOver += (s, de) =>
@@ -887,10 +909,10 @@ namespace EventScriptIDE
 				Top = 5,
 			});
 
-			var btnX = MakeHdrBtn("✖", Helpers.BtnRed, (s, e) => DelEvent(gi, ei), DeleteIcon);
+			var btnX = MakeHdrBtn("✖", Color.Transparent, (s, e) => DelEvent(gi, ei), DeleteIcon);
 			//var btnDown = MakeHdrBtn("▼", Helpers.BtnGreen, (s, e) => MoveEvent(gi, ei, 1), DownIcon); // commented out - drag now used
 			//var btnUp = MakeHdrBtn("▲", Helpers.BtnGreen, (s, e) => MoveEvent(gi, ei, -1), UpIcon); // commented out - drag now used
-			var btnRename = MakeHdrBtn("REN", Helpers.BtnDarkBlue, (s, e) => RenameEvent(gi, ei), RenameIcon);
+			var btnRename = MakeHdrBtn("REN", Color.Transparent, (s, e) => RenameEvent(gi, ei), RenameIcon);
 
 			int totalBtnW = 0;
 			//var hdrBtns = new[] { btnX, btnDown, btnUp, btnRename };
@@ -1013,7 +1035,8 @@ namespace EventScriptIDE
 					if (key == "conditions") AddCondition(gi, ei);
 					else AddAction(gi, ei);
 				}, 0, 22);
-			addBtn.Dock = DockStyle.Bottom;
+			addBtn.Dock = DockStyle.Left | DockStyle.Bottom;
+			addBtn.MaximumSize = new Size(0, 22);
 
 			var pasteBtn = Helpers.MakeBtn("PASTE", addBtnColor, Color.White,
 				(s2, e2) =>
@@ -1113,7 +1136,7 @@ namespace EventScriptIDE
 			ButtonsHolder.Controls.Add(pasteBtn);
 			ButtonsHolder.Controls.Add(addBtn);
 			panel.Controls.Add(ButtonsHolder);
-			panel.Controls.Add(addBtn);
+			//panel.Controls.Add(addBtn);
 			panel.Controls.Add(itemsHolder);
 			panel.Controls.Add(lbl);
 			return panel;
@@ -1276,11 +1299,11 @@ namespace EventScriptIDE
 			};
 			lbl.MaximumSize = new Size(((this.Width - split.Panel2.Width) / 3), 0);
 
-			var btnEdit = MakeHdrBtn("✎", Helpers.BtnBlue, (s, e) => EditItem(gi, ei, key, j), EditIcon);
-			var btnDel = MakeHdrBtn("✖", Helpers.BtnRed, (s, e) => DelItem(gi, ei, key, j), DeleteIcon);
+			var btnEdit = MakeHdrBtn("✎", Color.Transparent, (s, e) => EditItem(gi, ei, key, j), EditIcon);
+			var btnDel = MakeHdrBtn("✖", Color.Transparent, (s, e) => DelItem(gi, ei, key, j), DeleteIcon);
 			//	var btnDown = MakeHdrBtn("▼", Helpers.BtnDarkGray, (s, e) => MoveItem(gi, ei, key, j, 1), DownIcon);
 			//	var btnUp = MakeHdrBtn("▲", Helpers.BtnDarkGray, (s, e) => MoveItem(gi, ei, key, j, -1), UpIcon);
-			var btnCopy = MakeHdrBtn("⧉", Helpers.BtnDarkBlue, (s, e) =>
+			var btnCopy = MakeHdrBtn("⧉", Color.Transparent, (s, e) =>
 			{
 				_clipboard = new ItemDefinition
 				{
@@ -1310,7 +1333,9 @@ namespace EventScriptIDE
 
 		static Button MakeHdrBtn(string text, Color bg, EventHandler handler, Image img = null)
         {
-            var b = new Button
+			bg = Color.Transparent;
+
+			var b = new Button
             {
                 Text = img == null ? text : string.Empty,
                 Image = img,
