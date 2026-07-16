@@ -102,9 +102,9 @@ namespace EventScriptIDE.Dialogs
 			if(CustomMessageBox.Show("Save and Restart ES VPE ? make sure your project has been saved !","WARNING",MessageBoxButtons.YesNo,MessageBoxIcon.Warning)==DialogResult.Yes)
 			{
 				ParentIde.SaveProject(false);
-				var save = $"{MonoFont1.FontFamily.Name},{MonoFont1.Style.ToString()},{MonoFont1.Size.ToString()};" +
-						   $"{MonoFont2.FontFamily.Name},{MonoFont2.Style.ToString()},{MonoFont2.Size.ToString()};" +
-						   $"{VFont1   .FontFamily.Name},{VFont1   .Style.ToString()},{VFont1   .Size.ToString()};";
+				var save = $"{MonoFont1.FontFamily.Name},{MonoFont1.Style.ToString().Replace(",", ".")},{MonoFont1.Size.ToString().Replace(",", ".")};" +
+						   $"{MonoFont2.FontFamily.Name},{MonoFont2.Style.ToString().Replace(",", ".")},{MonoFont2.Size.ToString().Replace(",", ".")};" +
+						   $"{VFont1   .FontFamily.Name},{VFont1   .Style.ToString().Replace(",", ".")},{VFont1   .Size.ToString().Replace(",", ".")};";
 				//MessageBox.Show(save);
 				ASettings.Fonts1 = save;
 				SettingsManager.Save(ASettings);
@@ -118,6 +118,25 @@ namespace EventScriptIDE.Dialogs
 				};
 				Process.Start(NewProces);
 				Environment.Exit(0);
+			}
+		}
+
+		private void button3_Click(object sender, EventArgs e)
+		{
+			if (CustomMessageBox.Show("Reset theme  ?", "question", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+			{
+				MonoFont1 = new Font("Courier New", 9f, FontStyle.Bold);
+				MonoFont2 = new Font("Courier New", 8f, FontStyle.Regular);
+				VFont1 = new Font("Verdana", 8f, FontStyle.Bold);
+				foreach (Control c in MonoFont1Controls)
+				{
+					c.Font = MonoFont1;
+				}
+				foreach (Control c in MonoFont2Controls)
+				{
+					c.Font = MonoFont2;
+				}
+				label2.Font = VFont1;
 			}
 		}
 	}

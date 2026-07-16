@@ -88,7 +88,7 @@ namespace EventScriptIDE.Dialogs
             bot.Controls.Add(_importsCombo);
             bot.Controls.Add(new Label
             {
-                Text      = "(optional — injects extra code)",
+                Text      = "(optional)",
                 ForeColor = Color.Gray,
                 AutoSize  = true,
                 Left = 258, Top = 12,
