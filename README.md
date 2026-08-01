@@ -24,7 +24,14 @@ Done!
 
 # SHOWCASE
 
-![windows7](https://github.com/radim776/ES-VPE/blob/main/Capture.PNG?raw=true)
+## WindowsXp
+![windowsxp](https://github.com/radim776/ES-VPE/blob/main/windowsxp.png?raw=true)
+
+## Windows7
+![windows7](https://github.com/radim776/ES-VPE/blob/main/windows7.png?raw=true)
+
+## Windows10
+![windows10](https://github.com/radim776/ES-VPE/blob/main/windows10.png?raw=true)
 
 # BADGES
 ![Build](https://github.com/radim776/ES-VPE/actions/workflows/build.yml/badge.svg)
