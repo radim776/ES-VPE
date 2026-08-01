@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
@@ -27,6 +28,8 @@ namespace EventScriptIDE
         ListBox _varList;
         ListBox _ctrlList;
 		Panel _insertLine;
+
+		bool Changed = false;
 
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		public static extern int MessageBox(IntPtr hWnd, string text, string caption, uint type);
@@ -75,15 +78,16 @@ namespace EventScriptIDE
         {
             _settings = SettingsManager.Load();
             ExtensionRegistry.Reload();
-
+			FormClosing += IDE_FormClosing;
             Text = "ES VPE";
             Size = new Size(1280, 720);
             MinimumSize = new Size(900, 600);
             Font = new Font("Segoe UI", 9f);
             BackColor = SystemColors.Control;
             StartPosition = FormStartPosition.CenterScreen;
-            
-            string exePath = Assembly.GetExecutingAssembly().Location;
+			//Show();
+
+			string exePath = Assembly.GetExecutingAssembly().Location;
             
             Icon exeIcon = Icon.ExtractAssociatedIcon(exePath);
             
@@ -95,7 +99,8 @@ namespace EventScriptIDE
 			LoadFonts();
 
 			BuildUI();
-            BuildMenu();
+
+			BuildMenu();
             //Controls.SetChildIndex(MainMenuStrip, 0);
             Refresh2();
 
@@ -113,7 +118,35 @@ namespace EventScriptIDE
                     Refresh2();
                 }
             }
-        }
+			Show();
+			var vbc = Path.Combine(_settings.BuildToolsPath, "MSBuild", "Current", "Bin", "Roslyn", "vbc.exe");
+			if (!File.Exists(vbc)) vbc = "vbc";
+			try
+			{
+				var result = Process.Start(new ProcessStartInfo
+				{
+					FileName = vbc,
+					Arguments = "-Version",
+					RedirectStandardOutput = true,
+					RedirectStandardError = true,
+					UseShellExecute = false,
+					CreateNoWindow = true
+				});
+
+				result?.WaitForExit();
+
+				if (result == null || result.ExitCode != 0)
+					throw new Exception("vbc check failed");
+			}
+			catch
+			{
+				using (var dlg = new InstallNetSdk(_settings, this))
+				{
+					Helpers.CenterOnOwner2(dlg, this);
+					dlg.ShowDialog(this);
+				}
+			}
+		}
 
         // ---------------------------------------------------------------------
         // UI Construction
@@ -667,6 +700,10 @@ namespace EventScriptIDE
 
 			return fonts;
 		}
+		void ProjectChanged()
+		{
+			Changed = true;
+		}
 		void LoadFonts()
 		{
 			var Fonts = DecodeFonts(_settings.Fonts1);
@@ -1144,13 +1181,15 @@ namespace EventScriptIDE
 		void PasteCondition(int gi, int ei, ItemDefinition item)
         {
             _project.EventGroups[gi].Events[ei].Conditions.Add(item);
-            RefreshGroups();
+			ProjectChanged();
+			RefreshGroups();
         }
 
         void PasteAction(int gi, int ei, ItemDefinition item)
         {
             _project.EventGroups[gi].Events[ei].Actions.Add(item);
-            RefreshGroups();
+			ProjectChanged();
+			RefreshGroups();
         }
 		int GetInsertIndexFromY(Control parent, int y, Control skip = null)
 		{
@@ -1183,6 +1222,7 @@ namespace EventScriptIDE
 			if (fromIndex == toIndex || fromIndex + 1 == toIndex)
 			{
 				RefreshGroups();
+				ProjectChanged();
 				return;
 			}
 			var ev = list[fromIndex];
@@ -1191,6 +1231,7 @@ namespace EventScriptIDE
 			if (toIndex > list.Count) toIndex = list.Count;
 			list.Insert(toIndex, ev);
 			RefreshGroups();
+			ProjectChanged();
 		}
 		void ShowInsertLine(Control parent, int y)
 		{
@@ -1241,6 +1282,7 @@ namespace EventScriptIDE
 			if (fromIndex == toIndex || fromIndex + 1 == toIndex)
 			{
 				RefreshGroups();
+				ProjectChanged();
 				return;
 			}
 			var el = list[fromIndex];
@@ -1248,6 +1290,7 @@ namespace EventScriptIDE
 			if (toIndex > fromIndex) toIndex--;
 			if (toIndex > list.Count) toIndex = list.Count;
 			list.Insert(toIndex, el);
+			ProjectChanged();
 			RefreshGroups();
 		}
 		Panel BuildItemRow(int gi, int ei, int j, ItemDefinition item, string key, Color bg, Color fg, Panel ih)
@@ -1370,7 +1413,8 @@ namespace EventScriptIDE
                 var name = Helpers.AutoGroupName(_project);
                 _project.EventGroups.Add(new EventGroup { Name = name, Trigger = dlg.Result });
             }
-            Refresh2();
+			ProjectChanged();
+			Refresh2();
         }
 
         void DelEventGroup(int gi)
@@ -1378,7 +1422,8 @@ namespace EventScriptIDE
             var g = _project.EventGroups[gi];
             if (CustomMessageBox.Show("Delete group \"" + g.Name + "\" and all " + g.Events.Count + " event(s)?", "Delete Group", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
             _project.EventGroups.RemoveAt(gi);
-            Refresh2();
+			ProjectChanged();
+			Refresh2();
         }
 
         void MoveEventGroup(int gi, int dir)
@@ -1388,7 +1433,9 @@ namespace EventScriptIDE
             var tmp = _project.EventGroups[gi];
             _project.EventGroups[gi] = _project.EventGroups[ni];
             _project.EventGroups[ni] = tmp;
-            RefreshGroups(); UpdateInfo();
+			ProjectChanged();
+			RefreshGroups();
+			UpdateInfo();
         }
 
         void RenameEventGroup(int gi)
@@ -1397,7 +1444,8 @@ namespace EventScriptIDE
             var name = Microsoft.VisualBasic.Interaction.InputBox("new name:", "RENAME GROUP", old);
             if (string.IsNullOrEmpty(name)) return;
             _project.EventGroups[gi].Name = name;
-            Refresh2();
+			ProjectChanged();
+			Refresh2();
         }
 
         void EditGroupTrigger(int gi)
@@ -1409,7 +1457,8 @@ namespace EventScriptIDE
                 if (dlg.Result == null) return;
                 _project.EventGroups[gi].Trigger = dlg.Result;
             }
-            RefreshGroups();
+			ProjectChanged();
+			RefreshGroups();
         }
 
         // ---------------------------------------------------------------------
@@ -1421,14 +1470,16 @@ namespace EventScriptIDE
             var group = _project.EventGroups[gi];
             var name = Helpers.AutoEventName(group);
             group.Events.Add(new EventModel { Name = name });
-            Refresh2();
+			ProjectChanged();
+			Refresh2();
         }
 
         void DelEvent(int gi, int ei)
         {
             if (CustomMessageBox.Show("Delete this event?", "Delete Event", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
             _project.EventGroups[gi].Events.RemoveAt(ei);
-            Refresh2();
+			ProjectChanged();
+			Refresh2();
         }
 
         void MoveEvent(int gi, int ei, int dir)
@@ -1437,7 +1488,8 @@ namespace EventScriptIDE
             var ni = ei + dir;
             if (ni < 0 || ni >= events.Count) return;
             var tmp = events[ei]; events[ei] = events[ni]; events[ni] = tmp;
-            RefreshGroups();
+			ProjectChanged();
+			RefreshGroups();
         }
 
         void RenameEvent(int gi, int ei)
@@ -1446,7 +1498,8 @@ namespace EventScriptIDE
             var name = Microsoft.VisualBasic.Interaction.InputBox("new name:", "RENAME EVENT", old);
             if (string.IsNullOrEmpty(name)) return;
             _project.EventGroups[gi].Events[ei].Name = name;
-            RefreshGroups();
+			ProjectChanged();
+			RefreshGroups();
         }
 
         // ---------------------------------------------------------------------
@@ -1462,7 +1515,8 @@ namespace EventScriptIDE
                 if (dlg.Result == null) return;
                 _project.EventGroups[gi].Events[ei].Conditions.Add(dlg.Result);
             }
-            RefreshGroups();
+			ProjectChanged();
+			RefreshGroups();
         }
 
         void AddAction(int gi, int ei)
@@ -1474,7 +1528,8 @@ namespace EventScriptIDE
                 if (dlg.Result == null) return;
                 _project.EventGroups[gi].Events[ei].Actions.Add(dlg.Result);
             }
-            RefreshGroups();
+			ProjectChanged();
+			RefreshGroups();
         }
 
         void EditItem(int gi, int ei, string key, int j)
@@ -1493,7 +1548,8 @@ namespace EventScriptIDE
                 if (dlg.Result == null) return;
                 items[j] = dlg.Result;
             }
-            RefreshGroups();
+			ProjectChanged();
+			RefreshGroups();
         }
 
         void DelItem(int gi, int ei, string key, int j)
@@ -1502,7 +1558,8 @@ namespace EventScriptIDE
                 ? _project.EventGroups[gi].Events[ei].Conditions
                 : _project.EventGroups[gi].Events[ei].Actions;
             items.RemoveAt(j);
-            RefreshGroups();
+			ProjectChanged();
+			RefreshGroups();
         }
 
         void MoveItem(int gi, int ei, string key, int j, int dir)
@@ -1513,7 +1570,8 @@ namespace EventScriptIDE
             var ni = j + dir;
             if (ni < 0 || ni >= items.Count) return;
             var tmp = items[j]; items[j] = items[ni]; items[ni] = tmp;
-            RefreshGroups();
+			ProjectChanged();
+			RefreshGroups();
         }
 
         // ---------------------------------------------------------------------
@@ -1529,7 +1587,9 @@ namespace EventScriptIDE
                 if (dlg.Result == null) return;
                 _project.Variables.Add(dlg.Result);
             }
-            RefreshVarList(); UpdateInfo();
+			ProjectChanged();
+			RefreshVarList();
+			UpdateInfo();
         }
 
         void EditVariable()
@@ -1543,7 +1603,8 @@ namespace EventScriptIDE
                 if (dlg.Result == null) return;
                 _project.Variables[idx] = dlg.Result;
             }
-            RefreshVarList();
+			ProjectChanged();
+			RefreshVarList();
         }
 
         void DelVariable()
@@ -1551,7 +1612,9 @@ namespace EventScriptIDE
             if (_varList.SelectedIndex < 0) return;
             if (CustomMessageBox.Show("Delete this variable?", "Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
             _project.Variables.RemoveAt(_varList.SelectedIndex);
-            RefreshVarList(); UpdateInfo();
+            RefreshVarList();
+			ProjectChanged();
+			UpdateInfo();
         }
 
         // ---------------------------------------------------------------------
@@ -1567,7 +1630,9 @@ namespace EventScriptIDE
                 if (dlg.Result == null) return;
                 _project.Controls.Add(dlg.Result);
             }
-            RefreshCtrlList(); UpdateInfo();
+            RefreshCtrlList();
+			ProjectChanged();
+			UpdateInfo();
         }
 
         void EditControl()
@@ -1582,14 +1647,17 @@ namespace EventScriptIDE
                 _project.Controls[idx] = dlg.Result;
             }
             RefreshCtrlList();
-        }
+			ProjectChanged();
+		}
 
         void DelControl()
         {
             if (_ctrlList.SelectedIndex < 0) return;
             if (CustomMessageBox.Show("Delete this control?", "Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
             _project.Controls.RemoveAt(_ctrlList.SelectedIndex);
-            RefreshCtrlList(); UpdateInfo();
+			ProjectChanged();
+			RefreshCtrlList();
+			UpdateInfo();
         }
 
         void OpenVisualDesigner()
@@ -1603,8 +1671,12 @@ namespace EventScriptIDE
             {
                 Helpers.CenterOnOwner2(dlg, this);
                 dlg.ShowDialog(this);
-                if (dlg.Result != null) RefreshCtrlList();
-            }
+				if (dlg.Result != null)
+				{
+					RefreshCtrlList();
+					ProjectChanged();
+				}
+			}
         }
 
         // ---------------------------------------------------------------------
@@ -1629,7 +1701,8 @@ namespace EventScriptIDE
                 _project.EmbeddedFiles = dlg.Result.EmbeddedFiles;
             }
             Refresh2();
-        }
+			ProjectChanged();
+		}
 
         // ---------------------------------------------------------------------
         // File I/O
@@ -1637,15 +1710,19 @@ namespace EventScriptIDE
 
         void NewProject()
         {
-            if (CustomMessageBox.Show("Discard current project and start fresh?", "New Project",MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
+            if (CustomMessageBox.Show("Discard current project ?", "New Project",MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
             _project = new ProjectModel();
             _projectPath = null;
             Refresh2();
+			Changed = false;
         }
 
         void NewProject2()
         {
-            //if (CustomMessageBox.Show("Discard current project and start fresh?", "New Project", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
+            if(Changed)
+			{
+				if (CustomMessageBox.Show("project data is changed , create new anyway ?", "New Project", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
+			}
             using (var dlg = new TemplateDialog())
             {
                 Helpers.CenterOnOwner2(dlg, this);
@@ -1661,6 +1738,7 @@ namespace EventScriptIDE
                             _project = new ProjectModel();
                             _projectPath = null;
                             Refresh2();
+							Changed = false;
                             break;
 
                         case 2:
@@ -1675,7 +1753,8 @@ namespace EventScriptIDE
                             }
                             _projectPath = null;
                             Refresh2();
-                            break;
+							Changed = false;
+							break;
 
                         default:
                             CustomMessageBox.Show("Unknown TempLate ID:" + Result, "CRITICAL FATAIL FAILURE",MessageBoxButtons.OK,MessageBoxIcon.Error);
@@ -1713,6 +1792,7 @@ namespace EventScriptIDE
 					_project = project;
 					_projectPath = dlg.FileName;
 					Refresh2();
+					Changed = false;
 				}
 				catch (Exception ex)
 				{
@@ -1738,7 +1818,8 @@ namespace EventScriptIDE
                 if (dlg.ShowDialog() != DialogResult.OK) return;
                 _projectPath = dlg.FileName;
                 WriteProject(_projectPath,true);
-            }
+				Changed = false;
+			}
         }
 
         void WriteProject(string path, bool ShowPopup)
@@ -1759,13 +1840,15 @@ namespace EventScriptIDE
                 UpdateInfo();
                 if(ShowPopup)
 				{
+					Changed = false;
 					CustomMessageBox.Show("Saved :\n" + path, "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				}
             }
             catch (Exception ex)
             {
                 CustomMessageBox.Show("error :\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+				Changed = true;
+			}
         }
 
         ProjectModel ReadProjectFromFile(string path)
@@ -1925,7 +2008,8 @@ namespace EventScriptIDE
             {
                 System.Diagnostics.Process.Start(
                     new System.Diagnostics.ProcessStartInfo(SettingsManager.ExtensionsDir)
-                    { UseShellExecute = true });
+                    { UseShellExecute = true }
+				);
             }
             catch
             {
@@ -1945,6 +2029,18 @@ namespace EventScriptIDE
                 dlg.ShowDialog(this);
             }
         }
+
+		private void IDE_FormClosing(object sender,FormClosingEventArgs e)
+		{
+			if(Changed)
+			{
+				DialogResult result = CustomMessageBox.Show("are you sure to exit ? project is unsaved", "Confirm Exit",MessageBoxButtons.YesNo,MessageBoxIcon.Exclamation);
+				if (result == DialogResult.No)
+				{
+					e.Cancel = true;
+				}
+			}
+		}
 
         private void InitializeComponent()
         {
