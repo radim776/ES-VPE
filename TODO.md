@@ -6,4 +6,4 @@ TODO LIST
 - [ ] optimize the UI for less lag
 - [ ] add undo
 - [ ] add redo
-- [ ] fix the bugs then publish repo
+- [x] fix the bugs then publish repo
