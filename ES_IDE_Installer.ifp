@@ -3,7 +3,7 @@
 ProjectFileVersion = 1.1
 [General]
 Program name = ES VPE
-Program version = 0.0.4.0
+Program version = 0.0.5.1
 Windows XP = 1
 Windows Server 2003 = 1
 Windows Vista = 1
@@ -13,8 +13,8 @@ Windows 8 = 1
 Windows 10 = 1
 Windows Server 2016 = 1
 Windows Server 2019 = 1
-Windows Server 2022 = 1
-Windows 11 = 1
+Windows Server 2022 = 0
+Windows 11 = 0
 DoNotCheckOS = 0
 Company name = RO INC
 Website = http://ro-inc.xyz/
@@ -90,14 +90,14 @@ C:\Users\Radimek\AppData\Roaming\EventScriptIDE\ico.ico
 1.1 KB
 ico
 [Licence_Begin]
-39097
-{\rtf1\ansi\ansicpg1250\deff0\nouicompat\deflang1029{\fonttbl{\f0\fnil\fcharset238 Arial;}}
-{\colortbl ;\red0\green0\blue255;}
+39162
+{\rtf1\ansi\ansicpg1250\deff0\nouicompat\deflang1029{\fonttbl{\f0\fnil\fcharset238 Courier New;}}
+{\colortbl ;\red0\green0\blue0;\red255\green255\blue255;\red0\green0\blue255;}
 {\*\generator Riched20 10.0.19041}\viewkind4\uc1 
-\pard\f0\fs20                     GNU GENERAL PUBLIC LICENSE\par
+\pard\cf1\highlight2\f0\fs18                     GNU GENERAL PUBLIC LICENSE\par
                        Version 3, 29 June 2007\par
 \par
- Copyright (C) 2007 Free Software Foundation, Inc. <{{\field{\*\fldinst{HYPERLINK "https://fsf.org/"}}{\fldrslt{https://fsf.org/\ul0\cf0}}}}\f0\fs20 >\par
+ Copyright (C) 2007 Free Software Foundation, Inc. <{{\field{\*\fldinst{HYPERLINK "https://fsf.org/"}}{\fldrslt{https://fsf.org/\ul0\cf0}}}}\f0\fs18 >\par
  Everyone is permitted to copy and distribute verbatim copies\par
  of this license document, but changing it is not allowed.\par
 \par
@@ -741,7 +741,7 @@ the "copyright" line and a pointer to where the full notice is found.\par
     GNU General Public License for more details.\par
 \par
     You should have received a copy of the GNU General Public License\par
-    along with this program.  If not, see <{{\field{\*\fldinst{HYPERLINK "https://www.gnu.org/licenses/"}}{\fldrslt{https://www.gnu.org/licenses/\ul0\cf0}}}}\f0\fs20 >.\par
+    along with this program.  If not, see <{{\field{\*\fldinst{HYPERLINK "https://www.gnu.org/licenses/"}}{\fldrslt{https://www.gnu.org/licenses/\ul0\cf0}}}}\f0\fs18 >.\par
 \par
 Also add information on how to contact you by electronic and paper mail.\par
 \par
@@ -760,14 +760,14 @@ might be different; for a GUI interface, you would use an "about box".\par
   You should also get your employer (if you work as a programmer) or school,\par
 if any, to sign a "copyright disclaimer" for the program, if necessary.\par
 For more information on this, and how to apply and follow the GNU GPL, see\par
-<{{\field{\*\fldinst{HYPERLINK "https://www.gnu.org/licenses/"}}{\fldrslt{https://www.gnu.org/licenses/\ul0\cf0}}}}\f0\fs20 >.\par
+<{{\field{\*\fldinst{HYPERLINK "https://www.gnu.org/licenses/"}}{\fldrslt{https://www.gnu.org/licenses/\ul0\cf0}}}}\f0\fs18 >.\par
 \par
   The GNU General Public License does not permit incorporating your program\par
 into proprietary programs.  If your program is a subroutine library, you\par
 may consider it more useful to permit linking proprietary applications with\par
 the library.  If this is what you want to do, use the GNU Lesser General\par
 Public License instead of this License.  But first, please read\par
-<{{\field{\*\fldinst{HYPERLINK "https://www.gnu.org/licenses/why-not-lgpl.html"}}{\fldrslt{https://www.gnu.org/licenses/why-not-lgpl.html\ul0\cf0}}}}\f0\fs20 >.\par
+<{{\field{\*\fldinst{HYPERLINK "https://www.gnu.org/licenses/why-not-lgpl.html"}}{\fldrslt{https://www.gnu.org/licenses/why-not-lgpl.html\ul0\cf0}}}}\f0\fs18 >.\par
 }
  [Licence_End]
 [Registry]
@@ -791,6 +791,12 @@ ESIDE.Project\shell\open\command
 Desktop
 ES VPE
 <InstallPath>\ES_IDE.EXE
+
+
+0
+Startmenu
+ES VPE
+<InstallPath>\ES_IDE.exe
 
 
 0
@@ -828,18 +834,18 @@ MKDIR %APPDATA%\EventScriptIDE\Extensions\Triggers
 
 
 Shell Execute
-MOVE "C:\Program Files (x86)\RO INC\ES IDE\ico.ico" "%APPDATA%\EventScriptIDE\ico.ico"
+MOVE "C:\Program Files (x86)\RO INC\ES VPE\ico.ico" "%APPDATA%\EventScriptIDE\ico.ico"
 
 
 Shell Execute
-MOVE "C:\Program Files\RO INC\ES IDE\ico.ico" "%APPDATA%\EventScriptIDE\ico.ico"
+MOVE "C:\Program Files\RO INC\ES VPE\ico.ico" "%APPDATA%\EventScriptIDE\ico.ico"
 
 
 Shell Execute
-DEL "C:\Program Files (x86)\RO INC\ES IDE\ico.ico"
+DEL "C:\Program Files (x86)\RO INC\ES VPE\ico.ico"
 
 
 Shell Execute
-DEL "C:\Program Files\RO INC\ES IDE\ico.ico"
+DEL "C:\Program Files\RO INC\ES VPE\ico.ico"
 
 
